@@ -1,34 +1,48 @@
-import { NAVIGATION, SETTINGS_NAV_ITEM } from "@/config/navigation";
-import type { NavItem, NavSection, UserRole } from "@/types";
+import { ELEMENT_PARAMETRES, NAVIGATION } from "@/config/navigation";
+import { estLangueValide } from "@/i18n/config";
+import type { ElementNavigation, Langue, Role, SectionNavigation } from "@/types";
 
-/** Navigation sections visible to a role. Empty sections are dropped. */
-export function getNavigationForRole(role: UserRole): NavSection[] {
-  return NAVIGATION.map((section) => ({
-    ...section,
-    items: section.items.filter((item) => item.roles.includes(role)),
-  })).filter((section) => section.items.length > 0);
-}
-
-export function canAccessNavItem(item: NavItem, role: UserRole): boolean {
-  return item.roles.includes(role);
-}
-
-const ALL_NAV_ITEMS: NavItem[] = [
-  ...NAVIGATION.flatMap((section) => section.items),
-  SETTINGS_NAV_ITEM,
+const TOUS_LES_ELEMENTS: ElementNavigation[] = [
+  ...NAVIGATION.flatMap((section) => section.elements),
+  ELEMENT_PARAMETRES,
 ];
 
-export function getNavItem(id: string): NavItem | undefined {
-  return ALL_NAV_ITEMS.find((item) => item.id === id);
+/** Sections visibles pour un rôle. Les sections vides sont retirées. */
+export function obtenirNavigationPourRole(role: Role): SectionNavigation[] {
+  return NAVIGATION.map((section) => ({
+    ...section,
+    elements: section.elements.filter((element) => element.roles.includes(role)),
+  })).filter((section) => section.elements.length > 0);
 }
 
-/** Nav item matching the current path, including nested pages (/clients/123). */
-export function findNavItemByPath(pathname: string): NavItem | undefined {
-  return ALL_NAV_ITEMS.find(
-    (item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
+export function peutAccederElement(element: ElementNavigation, role: Role): boolean {
+  return element.roles.includes(role);
+}
+
+export function obtenirElementNavigation(id: string): ElementNavigation | undefined {
+  return TOUS_LES_ELEMENTS.find((element) => element.id === id);
+}
+
+/** « /fr/clients/12 » -> « /clients/12 » */
+export function retirerLangueDuChemin(chemin: string): string {
+  const [, premierSegment, ...reste] = chemin.split("/");
+  if (premierSegment && estLangueValide(premierSegment)) return `/${reste.join("/")}`;
+  return chemin;
+}
+
+/** « /clients », « ar » -> « /ar/clients » */
+export function cheminLocalise(chemin: string, langue: Langue): string {
+  return `/${langue}${chemin === "/" ? "" : chemin}`;
+}
+
+/** Élément correspondant au chemin courant, pages imbriquées comprises (/clients/12). */
+export function trouverElementParChemin(chemin: string): ElementNavigation | undefined {
+  const cheminSansLangue = retirerLangueDuChemin(chemin);
+  return TOUS_LES_ELEMENTS.find(
+    (element) => cheminSansLangue === element.chemin || cheminSansLangue.startsWith(`${element.chemin}/`),
   );
 }
 
-export function isNavItemActive(item: NavItem, pathname: string): boolean {
-  return findNavItemByPath(pathname)?.id === item.id;
+export function estElementActif(element: ElementNavigation, chemin: string): boolean {
+  return trouverElementParChemin(chemin)?.id === element.id;
 }

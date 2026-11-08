@@ -12,59 +12,55 @@ import {
   UsersRound,
   Wallet,
 } from "lucide-react";
-import { ADMIN_ROLES, STAFF_ROLES } from "@/constants";
-import type { NavItem, NavSection, UserRole } from "@/types";
+import { ROLES_ADMINISTRATION, ROLES_EQUIPE, ROLES_GESTION } from "@/constants";
+import type { ElementNavigation, SectionNavigation } from "@/types";
 
-const SCHEDULING_ROLES: readonly UserRole[] = STAFF_ROLES;
-const MANAGEMENT_ROLES: readonly UserRole[] = [...ADMIN_ROLES, "secretary"];
-
-export const NAVIGATION: NavSection[] = [
+/** Les libellés sont dans les dictionnaires (navigation.libelles). */
+export const NAVIGATION: SectionNavigation[] = [
   {
-    id: "overview",
-    items: [
-      { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: STAFF_ROLES },
-      { id: "appointments", label: "Appointments", href: "/appointments", icon: CalendarCheck, roles: SCHEDULING_ROLES },
-      { id: "calendar", label: "Calendar", href: "/calendar", icon: CalendarDays, roles: SCHEDULING_ROLES },
+    id: "apercu",
+    avecTitre: false,
+    elements: [
+      { id: "tableau-de-bord", chemin: "/tableau-de-bord", icone: LayoutDashboard, roles: ROLES_EQUIPE },
+      { id: "rendez-vous", chemin: "/rendez-vous", icone: CalendarCheck, roles: ROLES_EQUIPE },
+      { id: "calendrier", chemin: "/calendrier", icone: CalendarDays, roles: ROLES_EQUIPE },
     ],
   },
   {
-    id: "management",
-    label: "Management",
-    items: [
-      { id: "clients", label: "Clients", href: "/clients", icon: Users, roles: MANAGEMENT_ROLES },
-      { id: "services", label: "Services", href: "/services", icon: Briefcase, roles: ADMIN_ROLES },
-      { id: "team", label: "Team", href: "/team", icon: UsersRound, roles: ADMIN_ROLES },
-      { id: "availability", label: "Availability", href: "/availability", icon: Clock, roles: STAFF_ROLES },
+    id: "gestion",
+    avecTitre: true,
+    elements: [
+      { id: "clients", chemin: "/clients", icone: Users, roles: ROLES_GESTION },
+      { id: "services", chemin: "/services", icone: Briefcase, roles: ROLES_ADMINISTRATION },
+      { id: "equipe", chemin: "/equipe", icone: UsersRound, roles: ROLES_ADMINISTRATION },
+      { id: "disponibilites", chemin: "/disponibilites", icone: Clock, roles: ROLES_EQUIPE },
     ],
   },
   {
-    id: "engagement",
-    label: "Engagement",
-    items: [
-      { id: "online-booking", label: "Online Booking", href: "/online-booking", icon: Globe, roles: ADMIN_ROLES },
-      { id: "notifications", label: "Notifications", href: "/notifications", icon: Bell, roles: STAFF_ROLES },
+    id: "relation-client",
+    avecTitre: true,
+    elements: [
+      { id: "reservation-en-ligne", chemin: "/reservation-en-ligne", icone: Globe, roles: ROLES_ADMINISTRATION },
+      { id: "notifications", chemin: "/notifications", icone: Bell, roles: ROLES_EQUIPE },
     ],
   },
   {
-    id: "business",
-    label: "Business",
-    items: [
-      { id: "finance", label: "Finance", href: "/finance", icon: Wallet, roles: MANAGEMENT_ROLES },
-      { id: "reports", label: "Reports", href: "/reports", icon: ChartColumn, roles: ADMIN_ROLES },
+    id: "activite",
+    avecTitre: true,
+    elements: [
+      { id: "finances", chemin: "/finances", icone: Wallet, roles: ROLES_GESTION },
+      { id: "rapports", chemin: "/rapports", icone: ChartColumn, roles: ROLES_ADMINISTRATION },
     ],
   },
 ];
 
-/** Labels for routes that exist outside the main navigation. */
-export const EXTRA_ROUTE_LABELS: Record<string, string> = {
-  "/design-system": "Design System",
+/** Épinglé en bas de la barre latérale. */
+export const ELEMENT_PARAMETRES: ElementNavigation = {
+  id: "parametres",
+  chemin: "/parametres",
+  icone: Settings,
+  roles: ROLES_ADMINISTRATION,
 };
 
-/** Pinned at the bottom of the sidebar. */
-export const SETTINGS_NAV_ITEM: NavItem = {
-  id: "settings",
-  label: "Settings",
-  href: "/settings",
-  icon: Settings,
-  roles: ADMIN_ROLES,
-};
+export const CHEMIN_ACCUEIL = "/tableau-de-bord";
+export const CHEMIN_SYSTEME_DESIGN = "/systeme-de-design";

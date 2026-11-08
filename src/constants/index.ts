@@ -1,43 +1,27 @@
-import type { OrganizationType, UserRole } from "@/types";
+import type { Role } from "@/types";
 
-export const APP_NAME = "Maw3id";
-export const APP_DESCRIPTION =
-  "Appointment booking and management platform for professional organizations.";
+export const NOM_APPLICATION = "Maw3id";
 
-/** Matches Tailwind's `lg` breakpoint: sidebar is a collapsible column from here. */
-export const DESKTOP_MEDIA_QUERY = "(min-width: 1024px)";
+/** Correspond au point de rupture `lg` de Tailwind : barre latérale repliable à partir d'ici. */
+export const REQUETE_MEDIA_BUREAU = "(min-width: 1024px)";
 
-/** Time zone used to display dates until users can choose their own. */
-export const DEFAULT_TIME_ZONE = "Africa/Casablanca";
-export const DEFAULT_LOCALE = "en-GB";
+/** Fuseau d'affichage des dates tant que l'utilisateur ne peut pas choisir le sien. */
+export const FUSEAU_HORAIRE_PAR_DEFAUT = "Africa/Casablanca";
 
-export const ROLE_LABELS: Record<UserRole, string> = {
-  super_admin: "Super Admin",
-  organization_admin: "Organization Admin",
-  secretary: "Secretary",
-  collaborator: "Collaborator",
-  client: "Client",
-};
+/** Couleur de la barre du navigateur mobile (même valeur que --color-surface). */
+export const COULEUR_THEME_NAVIGATEUR = "#ffffff";
 
-export const ORGANIZATION_TYPE_LABELS: Record<OrganizationType, string> = {
-  medical_clinic: "Medical clinic",
-  dental_office: "Dental office",
-  law_firm: "Law firm",
-  accounting_firm: "Accounting firm",
-  consulting_office: "Consulting office",
-  training_center: "Training center",
-  other: "Professional services",
-};
-
-/** Roles that work inside an organization's back office. */
-export const STAFF_ROLES: readonly UserRole[] = [
-  "super_admin",
-  "organization_admin",
-  "secretary",
-  "collaborator",
+/** Rôles qui travaillent dans l'espace de gestion d'une organisation. */
+export const ROLES_EQUIPE: readonly Role[] = [
+  "administrateur_plateforme",
+  "administrateur",
+  "secretaire",
+  "collaborateur",
 ];
 
-export const ADMIN_ROLES: readonly UserRole[] = [
-  "super_admin",
-  "organization_admin",
-];
+export const ROLES_ADMINISTRATION: readonly Role[] = ["administrateur_plateforme", "administrateur"];
+
+export const ROLES_GESTION: readonly Role[] = [...ROLES_ADMINISTRATION, "secretaire"];
+
+/** Nombre de pages affichées de chaque côté de la page courante dans la pagination. */
+export const PAGES_VOISINES_PAGINATION = 1;

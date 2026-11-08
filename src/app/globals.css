@@ -1,41 +1,42 @@
 @import "tailwindcss";
 
 /*
- * Maw3id design tokens.
- * Every color, radius, shadow and text style is defined here once and
- * consumed through Tailwind utilities (bg-primary, text-fg-secondary,
- * rounded-control, text-page-title...). Components never hardcode colors.
- * Light theme only for now.
+ * Jetons de design de Maw3id.
+ * Chaque couleur, rayon, ombre et style de texte est défini ici une seule fois
+ * puis utilisé via les classes Tailwind (bg-primary, text-fg-secondary,
+ * rounded-control, text-page-title...). Aucun composant n'a de couleur en dur.
+ * Thème clair uniquement.
  */
 @theme {
-  /* Fonts (loaded with next/font in app/layout.tsx) */
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* Polices chargées avec next/font dans app/[langue]/layout.tsx.
+     Geist pour l'alphabet latin, IBM Plex Sans Arabic pour l'arabe. */
+  --font-sans: var(--font-geist), var(--font-plex-arabe), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Brand */
+  /* Marque */
   --color-primary: #2563eb;
   --color-primary-hover: #1d4ed8;
   --color-primary-subtle: #eff6ff;
   --color-primary-foreground: #ffffff;
 
-  /* Secondary: neutral filled surface for secondary actions */
+  /* Secondaire : surface neutre pour les actions secondaires */
   --color-secondary: #f1f5f9;
   --color-secondary-hover: #e2e8f0;
   --color-secondary-foreground: #0f172a;
 
-  /* Neutrals */
+  /* Neutres */
   --color-background: #f5f7fa;
   --color-surface: #ffffff;
   --color-surface-muted: #f8fafc;
   --color-border: #e4e7ec;
   --color-border-strong: #cbd2dc;
 
-  /* Text */
+  /* Texte */
   --color-fg: #0f172a;
   --color-fg-secondary: #475569;
   --color-fg-muted: #5b6b80;
 
-  /* Status (always paired with a label or icon, never color alone) */
+  /* Statuts (toujours accompagnés d'un libellé ou d'une icône) */
   --color-success: #15803d;
   --color-success-subtle: #f0fdf4;
   --color-warning: #b45309;
@@ -46,14 +47,14 @@
   --color-info: #0369a1;
   --color-info-subtle: #f0f9ff;
 
-  /* Focus ring */
+  /* Contour de focus */
   --color-ring: #3b82f6;
 
-  /* Typography scale: size, line height and weight together */
+  /* Échelle typographique : taille, interligne et graisse ensemble.
+     Texte courant 16 px minimum, libellés secondaires 14 px minimum. */
   --text-page-title: 1.5rem;
   --text-page-title--line-height: 2rem;
   --text-page-title--font-weight: 600;
-  --text-page-title--letter-spacing: -0.015em;
 
   --text-section-title: 1.125rem;
   --text-section-title--line-height: 1.75rem;
@@ -73,20 +74,16 @@
   --text-helper: 0.875rem;
   --text-helper--line-height: 1.25rem;
 
-  --text-caption: 0.75rem;
-  --text-caption--line-height: 1rem;
-  --text-caption--font-weight: 500;
-
-  /* Radii: controls stay between 6 and 10 px (no pill buttons) */
+  /* Rayons : contrôles entre 6 et 10 px (pas de bouton en pilule) */
   --radius-control: 0.5rem;
   --radius-card: 0.75rem;
 
-  /* Shadows: soft and minimal */
+  /* Ombres douces et discrètes */
   --shadow-card: 0 1px 2px 0 rgb(16 24 40 / 0.04);
   --shadow-popover:
     0 12px 24px -6px rgb(16 24 40 / 0.1), 0 2px 6px -2px rgb(16 24 40 / 0.06);
 
-  /* Layout dimensions (spacing scale stays Tailwind's 4 px grid) */
+  /* Dimensions de mise en page (l'espacement reste la grille de 4 px de Tailwind) */
   --spacing-sidebar: 16rem;
   --spacing-sidebar-collapsed: 4.5rem;
   --spacing-navbar: 4rem;
@@ -111,31 +108,33 @@
 
 @layer components {
   /*
-   * Native popover panels (Dropdown) anchored to their trigger with CSS
-   * anchor positioning. The trigger and the panel share --popover-anchor.
+   * Panneaux de MenuDeroulant (API Popover native) ancrés à leur déclencheur
+   * par le positionnement d'ancre CSS. Propriétés logiques : fonctionne en RTL.
    */
-  .popover-panel {
+  .panneau-popover {
     position: fixed;
     inset: auto;
     margin: 0;
     margin-block-start: 0.5rem;
-    position-anchor: var(--popover-anchor);
-    position-area: bottom span-left;
+    position-anchor: var(--ancre-popover);
+    position-area: block-end span-inline-start;
     position-try-fallbacks: flip-inline, flip-block;
   }
 
-  .popover-panel[data-align="start"] {
-    position-area: bottom span-right;
+  .panneau-popover[data-alignement="debut"] {
+    position-area: block-end span-inline-end;
   }
 
-  /* Fallback for browsers without anchor positioning */
+  /* Repli pour les navigateurs sans positionnement d'ancre */
   @supports not (anchor-name: --a) {
-    .popover-panel {
-      inset: calc(var(--spacing-navbar) + 0.25rem) 1rem auto auto;
+    .panneau-popover {
+      inset-block-start: calc(var(--spacing-navbar) + 0.25rem);
+      inset-inline-end: 1rem;
     }
 
-    .popover-panel[data-align="start"] {
-      inset: calc(var(--spacing-navbar) + 0.25rem) auto auto 1rem;
+    .panneau-popover[data-alignement="debut"] {
+      inset-inline-end: auto;
+      inset-inline-start: 1rem;
     }
   }
 

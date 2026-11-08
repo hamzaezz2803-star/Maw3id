@@ -1,82 +1,124 @@
 import type { LucideIcon } from "lucide-react";
 
 /*
- * Shared domain types. Field names use snake_case so mock data already
- * matches the future database rows and pages will not change when the
- * real data layer arrives.
+ * Types partagés. Les champs sont en snake_case et en français, comme les
+ * futures colonnes de la base : les pages ne changeront pas au passage à
+ * PostgreSQL.
  */
 
-export type UserRole =
-  | "super_admin"
-  | "organization_admin"
-  | "secretary"
-  | "collaborator"
+export type Langue = "fr" | "ar";
+
+export type Role =
+  | "administrateur_plateforme"
+  | "administrateur"
+  | "secretaire"
+  | "collaborateur"
   | "client";
 
-export type OrganizationType =
-  | "medical_clinic"
-  | "dental_office"
-  | "law_firm"
-  | "accounting_firm"
-  | "consulting_office"
-  | "training_center"
-  | "other";
+export type TypeOrganisation =
+  | "clinique_medicale"
+  | "cabinet_dentaire"
+  | "cabinet_avocats"
+  | "cabinet_comptable"
+  | "cabinet_conseil"
+  | "centre_formation"
+  | "autre";
 
-export interface Organization {
+/** Colonnes présentes sur chaque table. */
+interface Horodatage {
   id: string;
-  name: string;
-  type: OrganizationType;
-  logo_url: string | null;
-  city: string;
-  created_at: string;
+  cree_le: string;
+  modifie_le: string;
 }
 
-export interface User {
-  id: string;
-  full_name: string;
+export interface Organisation extends Horodatage {
+  nom: string;
+  type: TypeOrganisation;
+  logo_url: string | null;
+  ville: string;
+}
+
+export interface Utilisateur extends Horodatage {
+  nom_complet: string;
   email: string;
-  job_title: string;
+  fonction: string;
   avatar_url: string | null;
 }
 
-/** Link between a user and an organization, carrying the user's role there. */
-export interface Membership {
-  id: string;
-  user_id: string;
-  organization_id: string;
-  role: UserRole;
+/** Lien entre un utilisateur et une organisation, avec son rôle dans celle-ci. */
+export interface Membre extends Horodatage {
+  utilisateur_id: string;
+  organisation_id: string;
+  role: Role;
 }
 
-export type NotificationCategory = "booking" | "reminder" | "payment" | "system";
+export type TypeNotification =
+  | "nouvelle_reservation"
+  | "rappel_rendez_vous"
+  | "paiement_recu"
+  | "disponibilite_modifiee";
 
-export interface AppNotification {
-  id: string;
-  organization_id: string;
-  category: NotificationCategory;
-  title: string;
-  message: string;
-  is_read: boolean;
-  created_at: string;
+/** Le texte est construit à l'affichage, dans la langue de l'utilisateur. */
+export interface Notification extends Horodatage {
+  organisation_id: string;
+  type: TypeNotification;
+  /** Valeurs insérées dans le modèle de texte du type de notification. */
+  valeurs: Record<string, string>;
+  est_lue: boolean;
 }
 
-export interface NavItem {
-  /** Stable key, also used as the route segment. */
-  id: string;
-  label: string;
-  href: string;
-  icon: LucideIcon;
-  /** Roles allowed to see this item. Enforced later by real permissions. */
-  roles: readonly UserRole[];
+export interface OrganisationAvecRole {
+  organisation: Organisation;
+  role: Role;
 }
 
-export interface NavSection {
-  id: string;
-  /** Optional heading shown above the group in the expanded sidebar. */
-  label?: string;
-  items: NavItem[];
+export interface ContexteSession {
+  utilisateur: Utilisateur;
+  organisationCourante: Organisation;
+  role: Role;
+  /** Toutes les organisations de l'utilisateur, pour le sélecteur. */
+  organisations: OrganisationAvecRole[];
 }
 
-export interface BreadcrumbItem {
-  label: string;
-  href?: string;
+/** Résultat explicite des fonctions qui peuvent échouer. */
+export type Resultat<T> = { ok: true; donnees: T } | { ok: false; erreur: string };
+
+export type IdElementNavigation =
+  | "tableau-de-bord"
+  | "rendez-vous"
+  | "calendrier"
+  | "clients"
+  | "services"
+  | "equipe"
+  | "disponibilites"
+  | "reservation-en-ligne"
+  | "notifications"
+  | "finances"
+  | "rapports"
+  | "parametres";
+
+export type IdSectionNavigation = "apercu" | "gestion" | "relation-client" | "activite";
+
+export interface ElementNavigation {
+  /** Identifiant stable, aussi utilisé comme segment d'URL. */
+  id: IdElementNavigation;
+  /** Chemin sans le préfixe de langue (/clients). */
+  chemin: string;
+  icone: LucideIcon;
+  /** Rôles autorisés à voir l'élément. Les vraies permissions viendront plus tard. */
+  roles: readonly Role[];
 }
+
+export interface SectionNavigation {
+  id: IdSectionNavigation;
+  /** Une section sans titre est affichée en tête de la barre latérale. */
+  avecTitre: boolean;
+  elements: ElementNavigation[];
+}
+
+export interface ElementFilAriane {
+  libelle: string;
+  lien?: string;
+}
+
+export type StatutRendezVous = "confirme" | "en_attente" | "annule";

@@ -1,49 +1,50 @@
 import Image from "next/image";
-import { cn, getInitials } from "@/lib/utils";
+import { joindreClasses } from "@/lib/classes";
+import { obtenirInitiales } from "@/lib/formatage";
 
-export type AvatarSize = "sm" | "md" | "lg";
-export type AvatarShape = "circle" | "square";
+export type TailleAvatar = "petit" | "moyen" | "grand";
+export type FormeAvatar = "cercle" | "carre";
 
-const SIZE_CLASSES: Record<AvatarSize, string> = {
-  sm: "size-8 text-caption",
-  md: "size-9 text-label",
-  lg: "size-12 text-body font-semibold",
+const CLASSES_TAILLE: Record<TailleAvatar, string> = {
+  petit: "size-8 text-label",
+  moyen: "size-9 text-label",
+  grand: "size-12 text-body font-semibold",
 };
 
-const SIZE_PIXELS: Record<AvatarSize, number> = { sm: 32, md: 36, lg: 48 };
+const PIXELS_TAILLE: Record<TailleAvatar, number> = { petit: 32, moyen: 36, grand: 48 };
 
-export interface AvatarProps {
-  name: string;
-  src?: string | null;
-  size?: AvatarSize;
-  /** Square suits organization logos, circle suits people. */
-  shape?: AvatarShape;
+export interface ProprietesAvatar {
+  nom: string;
+  source?: string | null;
+  taille?: TailleAvatar;
+  /** Carré pour un logo d'organisation, cercle pour une personne. */
+  forme?: FormeAvatar;
   className?: string;
 }
 
-export function Avatar({ name, src, size = "md", shape = "circle", className }: AvatarProps) {
-  const classes = cn(
+export function Avatar({ nom, source, taille = "moyen", forme = "cercle", className }: ProprietesAvatar) {
+  const classes = joindreClasses(
     "inline-flex shrink-0 select-none items-center justify-center overflow-hidden font-medium",
-    shape === "circle" ? "rounded-full" : "rounded-control",
-    SIZE_CLASSES[size],
+    forme === "cercle" ? "rounded-full" : "rounded-control",
+    CLASSES_TAILLE[taille],
     className,
   );
 
-  if (src) {
+  if (source) {
     return (
       <Image
-        src={src}
-        alt={name}
-        width={SIZE_PIXELS[size]}
-        height={SIZE_PIXELS[size]}
-        className={cn(classes, "object-cover")}
+        src={source}
+        alt={nom}
+        width={PIXELS_TAILLE[taille]}
+        height={PIXELS_TAILLE[taille]}
+        className={joindreClasses(classes, "object-cover")}
       />
     );
   }
 
   return (
-    <span role="img" aria-label={name} className={cn(classes, "bg-primary-subtle text-primary-hover")}>
-      {getInitials(name)}
+    <span role="img" aria-label={nom} className={joindreClasses(classes, "bg-primary-subtle text-primary-hover")}>
+      {obtenirInitiales(nom)}
     </span>
   );
 }

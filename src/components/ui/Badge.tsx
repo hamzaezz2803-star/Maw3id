@@ -1,50 +1,44 @@
 import type { HTMLAttributes } from "react";
-import { cn } from "@/lib/utils";
+import { joindreClasses } from "@/lib/classes";
 
-export type BadgeVariant = "neutral" | "primary" | "success" | "warning" | "danger" | "info";
+export type VarianteBadge = "neutre" | "primaire" | "succes" | "attention" | "danger" | "info";
 
-const VARIANT_CLASSES: Record<BadgeVariant, string> = {
-  neutral: "border-border bg-secondary text-fg-secondary",
-  primary: "border-primary/20 bg-primary-subtle text-primary-hover",
-  success: "border-success/20 bg-success-subtle text-success",
-  warning: "border-warning/20 bg-warning-subtle text-warning",
+const CLASSES_VARIANTE: Record<VarianteBadge, string> = {
+  neutre: "border-border bg-secondary text-fg-secondary",
+  primaire: "border-primary/20 bg-primary-subtle text-primary-hover",
+  succes: "border-success/20 bg-success-subtle text-success",
+  attention: "border-warning/20 bg-warning-subtle text-warning",
   danger: "border-danger/20 bg-danger-subtle text-danger-hover",
   info: "border-info/20 bg-info-subtle text-info",
 };
 
-const DOT_CLASSES: Record<BadgeVariant, string> = {
-  neutral: "bg-fg-muted",
-  primary: "bg-primary",
-  success: "bg-success",
-  warning: "bg-warning",
+const CLASSES_POINT: Record<VarianteBadge, string> = {
+  neutre: "bg-fg-muted",
+  primaire: "bg-primary",
+  succes: "bg-success",
+  attention: "bg-warning",
   danger: "bg-danger",
   info: "bg-info",
 };
 
-export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: BadgeVariant;
-  /** Small colored dot before the label. The label always carries the meaning. */
-  withDot?: boolean;
+export interface ProprietesBadge extends HTMLAttributes<HTMLSpanElement> {
+  variante?: VarianteBadge;
+  /** Petit point coloré avant le libellé. Le sens est toujours porté par le libellé. */
+  avecPoint?: boolean;
 }
 
-export function Badge({
-  variant = "neutral",
-  withDot = false,
-  className,
-  children,
-  ...props
-}: BadgeProps) {
+export function Badge({ variante = "neutre", avecPoint = false, className, children, ...proprietes }: ProprietesBadge) {
   return (
     <span
-      className={cn(
-        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border px-2 py-0.5 text-caption [&_svg]:size-3.5",
-        VARIANT_CLASSES[variant],
+      className={joindreClasses(
+        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border px-2 py-0.5 text-label [&_svg]:size-3.5",
+        CLASSES_VARIANTE[variante],
         className,
       )}
-      {...props}
+      {...proprietes}
     >
-      {withDot && (
-        <span aria-hidden="true" className={cn("size-1.5 rounded-full", DOT_CLASSES[variant])} />
+      {avecPoint && (
+        <span aria-hidden="true" className={joindreClasses("size-1.5 rounded-full", CLASSES_POINT[variante])} />
       )}
       {children}
     </span>
