@@ -19,10 +19,13 @@ export function SelecteurLangue() {
       href={cheminLocalise(retirerLangueDuChemin(chemin), autreLangue)}
       hrefLang={autreLangue}
       title={t.barreNavigation.changerLangue}
-      className={classesBouton({ variante: "fantome", taille: "moyen", className: "px-2.5" })}
+      className={classesBouton({ variante: "fantome", taille: "moyen", className: "min-w-11 px-2.5" })}
     >
       <Languages aria-hidden="true" />
-      <span lang={autreLangue}>{NOM_LANGUE[autreLangue]}</span>
+      {/* Icône seule sur mobile, le nom de la langue reste lu par les lecteurs d'écran. */}
+      <span lang={autreLangue} className="sr-only sm:not-sr-only">
+        {NOM_LANGUE[autreLangue]}
+      </span>
     </Link>
   );
 }

@@ -1,0 +1,46 @@
+import { describe, expect, it } from "vitest";
+import { formaterDate, formaterDateHeure, formaterHeure, formaterTexte, obtenirInitiales } from "./formatage";
+
+describe("formaterTexte", () => {
+  it("remplace les clés par leurs valeurs", () => {
+    expect(formaterTexte("Page {page} sur {total}", { page: 2, total: 10 })).toBe("Page 2 sur 10");
+  });
+
+  it("laisse visible une clé sans valeur", () => {
+    expect(formaterTexte("Bonjour {prenom}", {})).toBe("Bonjour {prenom}");
+  });
+});
+
+describe("obtenirInitiales", () => {
+  it("garde les deux premières initiales en majuscules", () => {
+    expect(obtenirInitiales("salma idrissi")).toBe("SI");
+    expect(obtenirInitiales("Bennani Avocats Associés")).toBe("BA");
+  });
+
+  it("ignore les espaces en trop", () => {
+    expect(obtenirInitiales("  Imane   Tazi ")).toBe("IT");
+  });
+});
+
+describe("dates au Maroc", () => {
+  // Le décalage vient de la base des fuseaux horaires (UTC+1 à Casablanca en juillet 2026).
+  const date = "2026-07-15T13:30:00Z";
+
+  it("formate la date en français", () => {
+    expect(formaterDate(date, "fr")).toBe("mer. 15 juil. 2026");
+  });
+
+  it("formate l'heure sur 24 h dans le fuseau de Casablanca", () => {
+    expect(formaterHeure(date, "fr")).toBe("14:30");
+    expect(formaterHeure("2026-07-15T22:05:00Z", "fr")).toBe("23:05");
+  });
+
+  it("combine date et heure", () => {
+    expect(formaterDateHeure(date, "fr")).toBe("mer. 15 juil. 2026, 14:30");
+  });
+
+  it("formate en arabe avec des chiffres occidentaux (usage marocain)", () => {
+    expect(formaterHeure(date, "ar")).toBe("14:30");
+    expect(formaterDate(date, "ar")).toContain("2026");
+  });
+});

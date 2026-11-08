@@ -26,7 +26,7 @@ export async function BarreNavigation({ utilisateur, role, organisation, notific
       <ChampRecherche
         libelle={t.barreNavigation.rechercheLibelle}
         placeholder={t.barreNavigation.recherchePlaceholder}
-        classeConteneur="hidden w-64 md:block lg:w-80"
+        classeConteneur="hidden w-56 lg:block xl:w-80"
       />
       <div className="flex items-center gap-1">
         <SelecteurLangue />
