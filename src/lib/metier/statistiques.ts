@@ -66,3 +66,34 @@ export function variationPourcentage(valeur: number, reference: number): number 
   if (reference === 0) return null;
   return Math.round(((valeur - reference) / reference) * 100);
 }
+
+/**
+ * Répartit des rendez-vous qui se chevauchent en voies côte à côte (algorithme glouton).
+ * Renvoie, pour chaque identifiant, sa voie et le nombre de voies de son groupe de chevauchement.
+ */
+export function repartirEnVoies(rendezVous: RendezVous[]): Map<string, { voie: number; total: number }> {
+  const tries = [...rendezVous].sort((a, b) => a.debut_le.localeCompare(b.debut_le));
+  const resultat = new Map<string, { voie: number; total: number }>();
+  let groupe: { id: string; voie: number }[] = [];
+  let finsDesVoies: number[] = [];
+  let finGroupe = -1;
+
+  const fermerGroupe = () => {
+    for (const item of groupe) resultat.set(item.id, { voie: item.voie, total: finsDesVoies.length });
+    groupe = [];
+    finsDesVoies = [];
+  };
+
+  for (const item of tries) {
+    const debut = minutesDepuisMinuit(item.debut_le.slice(11, 16));
+    const fin = debut + item.duree_minutes;
+    if (debut >= finGroupe) fermerGroupe();
+    const voieLibre = finsDesVoies.findIndex((finVoie) => finVoie <= debut);
+    const voie = voieLibre === -1 ? finsDesVoies.length : voieLibre;
+    finsDesVoies[voie] = fin;
+    groupe.push({ id: item.id, voie });
+    finGroupe = Math.max(finGroupe, fin);
+  }
+  fermerGroupe();
+  return resultat;
+}

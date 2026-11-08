@@ -1,15 +1,17 @@
 import { Suspense } from "react";
 import { EcranChargement } from "@/components/mise-en-page/EcranChargement";
 import { MiseEnPagePrincipale } from "@/components/mise-en-page/MiseEnPagePrincipale";
-import { exigerContexteSession, obtenirNotificationsRecentes } from "@/lib/donnees/session";
+import { listerNotifications } from "@/lib/donnees/demonstration";
+import { exigerContexteSession } from "@/lib/donnees/session";
 
 /** Lit la session (au moment de la requête) : redirige vers la connexion si besoin. */
 async function CoquilleConnectee({ children }: { children: React.ReactNode }) {
   const session = await exigerContexteSession();
-  const notifications = await obtenirNotificationsRecentes();
+  // Notifications de démonstration, en attendant la table « notifications ».
+  const notifications = await listerNotifications();
 
   return (
-    <MiseEnPagePrincipale session={session} notifications={notifications.ok ? notifications.donnees : []}>
+    <MiseEnPagePrincipale session={session} notifications={notifications}>
       {children}
     </MiseEnPagePrincipale>
   );

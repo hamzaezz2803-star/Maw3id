@@ -8,6 +8,8 @@ import type { Client, Collaborateur, Service } from "@/types";
 /** Mardi 10 novembre 2026. À Casablanca, ce jour-là, l'heure locale = UTC. */
 export const JOUR_DEMONSTRATION = "2026-11-10";
 export const HEURE_ACTUELLE_DEMONSTRATION = "11:20";
+/** Adresse fictive de la page publique de réservation. */
+export const ADRESSE_RESERVATION_DEMO = "mawiid.ma/clinique-test";
 export const ID_ORGANISATION_DEMO = "d0000000-0000-4000-8000-000000000001";
 
 /** Identifiant au format uuid, stable d'un rendu à l'autre. */

@@ -6,6 +6,7 @@ import {
   minutesDepuisMinuit,
   prochainRendezVous,
   rendezVousDuJour,
+  repartirEnVoies,
   tauxOccupation,
   totalFactures,
   variationPourcentage,
@@ -80,5 +81,22 @@ describe("finances et rapports", () => {
   it("calcule une variation", () => {
     expect(variationPourcentage(52, 39)).toBe(33);
     expect(variationPourcentage(30, 0)).toBeNull();
+  });
+});
+
+describe("repartirEnVoies", () => {
+  it("place côte à côte les rendez-vous simultanés", () => {
+    const voies = repartirEnVoies([
+      rdv("a", "2026-11-10T09:00:00Z", 45, "confirme"),
+      rdv("b", "2026-11-10T09:00:00Z", 30, "confirme"),
+      rdv("c", "2026-11-10T09:30:00Z", 30, "confirme"),
+      rdv("d", "2026-11-10T11:00:00Z", 30, "confirme"),
+    ]);
+    expect(voies.get("a")).toEqual({ voie: 0, total: 2 });
+    expect(voies.get("b")).toEqual({ voie: 1, total: 2 });
+    // c réutilise la voie libérée par b à 09:30
+    expect(voies.get("c")).toEqual({ voie: 1, total: 2 });
+    // d ne chevauche personne : pleine largeur
+    expect(voies.get("d")).toEqual({ voie: 0, total: 1 });
   });
 });

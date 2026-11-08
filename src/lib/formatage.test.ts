@@ -7,6 +7,7 @@ import {
   formaterJourCourt,
   formaterJourLong,
   formaterMontant,
+  formaterPourcentage,
   formaterTelephone,
   formaterTexte,
   obtenirInitiales,
@@ -79,5 +80,12 @@ describe("montants, téléphones et durées", () => {
   it("écrit les jours courts et longs", () => {
     expect(formaterJourCourt("2026-11-10T09:00:00Z", "fr")).toBe("mar. 10 nov.");
     expect(formaterJourLong("2026-11-10T09:00:00Z", "fr")).toBe("mardi 10 novembre");
+  });
+});
+
+describe("formaterPourcentage", () => {
+  it("écrit les pourcentages selon la langue", () => {
+    expect(formaterPourcentage(31, "fr")).toBe("31\u00a0%");
+    expect(formaterPourcentage(31, "ar")).toContain("31");
   });
 });

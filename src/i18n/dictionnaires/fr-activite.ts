@@ -21,6 +21,7 @@ export const activiteFr = {
     aConfirmerDescription: "Demandes reçues en ligne ou par téléphone.",
     confirmer: "Confirmer",
     rienAConfirmer: "Aucune demande en attente.",
+    voirDemandes: "Voir toutes les demandes",
     activite: "Activité récente",
     indicateurs: {
       rendezVousSemaine: "Rendez-vous cette semaine",
@@ -50,8 +51,6 @@ export const activiteFr = {
     description: "La semaine de toute l'équipe, heure par heure.",
     semaine: "Semaine du {debut} au {fin}",
     aujourdHui: "Aujourd'hui",
-    semainePrecedente: "Semaine précédente",
-    semaineSuivante: "Semaine suivante",
   },
   clients: {
     description: "Les personnes qui prennent rendez-vous avec votre organisation.",

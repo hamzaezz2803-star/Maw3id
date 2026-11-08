@@ -23,6 +23,7 @@ export const activiteAr: typeof activiteFr = {
     aConfirmerDescription: "طلبات وصلت عبر الإنترنت أو الهاتف.",
     confirmer: "تأكيد",
     rienAConfirmer: "لا توجد طلبات في الانتظار.",
+    voirDemandes: "عرض كل الطلبات",
     activite: "النشاط الأخير",
     indicateurs: {
       rendezVousSemaine: "مواعيد هذا الأسبوع",
@@ -52,8 +53,6 @@ export const activiteAr: typeof activiteFr = {
     description: "أسبوع الفريق كله، ساعة بساعة.",
     semaine: "أسبوع {debut} إلى {fin}",
     aujourdHui: "اليوم",
-    semainePrecedente: "الأسبوع السابق",
-    semaineSuivante: "الأسبوع التالي",
   },
   clients: {
     description: "الأشخاص الذين يحجزون مواعيد لدى مؤسستك.",

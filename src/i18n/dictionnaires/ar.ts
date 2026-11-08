@@ -118,20 +118,6 @@ export const ar: Dictionnaire = {
     precedente: "الصفحة السابقة",
     suivante: "الصفحة التالية",
   },
-  tableauDeBord: {
-    bienvenue: "مرحبًا {prenom}. هذه مساحة عملك في {organisation}.",
-    voirSystemeDesign: "عرض نظام التصميم",
-    organisation: "المؤسسة",
-    typeOrganisation: "نوع المؤسسة",
-    votreRole: "دورك",
-    aVenirTitre: "لوحة التحكم قادمة قريبًا",
-    aVenirDescription:
-      "ستظهر هنا الأرقام الرئيسية ومواعيد اليوم والنشاط الأخير. لوحة التحكم مبرمجة في مرحلة التطوير القادمة.",
-  },
-  moduleAVenir: {
-    titre: "{module}: قريبًا",
-    description: "هذه الوحدة مبرمجة في مرحلة تطوير قادمة. التنقل والتخطيط جاهزان لها.",
-  },
   statutsRendezVous: {
     confirme: "مؤكد",
     en_attente: "قيد الانتظار",

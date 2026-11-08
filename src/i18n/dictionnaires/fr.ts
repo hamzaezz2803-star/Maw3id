@@ -121,21 +121,6 @@ export const fr = {
     precedente: "Page précédente",
     suivante: "Page suivante",
   },
-  tableauDeBord: {
-    bienvenue: "Bonjour {prenom}. Voici votre espace de travail chez {organisation}.",
-    voirSystemeDesign: "Voir le système de design",
-    organisation: "Organisation",
-    typeOrganisation: "Type d'organisation",
-    votreRole: "Votre rôle",
-    aVenirTitre: "Votre tableau de bord arrive bientôt",
-    aVenirDescription:
-      "Les chiffres clés, les rendez-vous du jour et l'activité récente apparaîtront ici. Le tableau de bord est prévu pour la prochaine étape de développement.",
-  },
-  moduleAVenir: {
-    titre: "{module} arrive bientôt",
-    description:
-      "Ce module est prévu pour une prochaine étape de développement. La navigation et la mise en page sont déjà prêtes.",
-  },
   statutsRendezVous: {
     confirme: "Confirmé",
     en_attente: "En attente",

@@ -7,6 +7,7 @@ import {
   RENDEZ_VOUS_DEMO,
 } from "@/donnees-fictives/demo-activite";
 import {
+  ADRESSE_RESERVATION_DEMO,
   CLIENTS_DEMO,
   EQUIPE_DEMO,
   HEURE_ACTUELLE_DEMONSTRATION,
@@ -139,6 +140,13 @@ export async function obtenirRapports() {
     services: classerServices(RENDEZ_VOUS_DEMO).map((item) => ({ ...item, nom: nomService(item.service_id) })),
     statuts: compterParStatut(RENDEZ_VOUS_DEMO),
     total: RENDEZ_VOUS_DEMO.length,
+  };
+}
+
+export async function obtenirPageReservation() {
+  return {
+    adresse: ADRESSE_RESERVATION_DEMO,
+    services: SERVICES_DEMO.filter((service) => service.est_actif && service.est_reservable_en_ligne),
   };
 }
 

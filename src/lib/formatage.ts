@@ -88,3 +88,10 @@ export function formaterJourLong(dateIso: string, langue: Langue): string {
     month: "long",
   }).format(new Date(dateIso));
 }
+
+/** 31 -> « 31 % » en français, format marocain en arabe. */
+export function formaterPourcentage(valeur: number, langue: Langue): string {
+  const texte = new Intl.NumberFormat(langue === "ar" ? PARAMETRES_REGIONAUX.ar : "fr-FR", { style: "percent", maximumFractionDigits: 0 }).format(valeur / 100);
+  // Même espace insécable que pour les montants.
+  return texte.replace(/[\u202f\u00a0]/g, "\u00a0");
+}
