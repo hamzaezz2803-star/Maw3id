@@ -1,5 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { formaterDate, formaterDateHeure, formaterHeure, formaterTexte, obtenirInitiales } from "./formatage";
+import {
+  formaterDate,
+  formaterDateHeure,
+  formaterDuree,
+  formaterHeure,
+  formaterJourCourt,
+  formaterJourLong,
+  formaterMontant,
+  formaterTelephone,
+  formaterTexte,
+  obtenirInitiales,
+} from "./formatage";
 
 describe("formaterTexte", () => {
   it("remplace les clés par leurs valeurs", () => {
@@ -42,5 +53,31 @@ describe("dates au Maroc", () => {
   it("formate en arabe avec des chiffres occidentaux (usage marocain)", () => {
     expect(formaterHeure(date, "ar")).toBe("14:30");
     expect(formaterDate(date, "ar")).toContain("2026");
+  });
+});
+
+describe("montants, téléphones et durées", () => {
+  it("écrit les montants au format « 1 250,00 MAD »", () => {
+    expect(formaterMontant(1250, "fr")).toBe("1\u00a0250,00\u00a0MAD");
+    expect(formaterMontant(400, "fr")).toBe("400,00\u00a0MAD");
+    expect(formaterMontant(1250, "ar")).toContain("1.250,00");
+  });
+
+  it("rend les numéros marocains lisibles", () => {
+    expect(formaterTelephone("+212612345678")).toBe("06 12 34 56 78");
+    expect(formaterTelephone("+33612345678")).toBe("+33612345678");
+  });
+
+  it("écrit les durées en heures et minutes", () => {
+    const unites = { heure: "h", minute: "min" };
+    expect(formaterDuree(45, unites)).toBe("45 min");
+    expect(formaterDuree(60, unites)).toBe("1 h");
+    expect(formaterDuree(90, unites)).toBe("1 h 30");
+    expect(formaterDuree(65, unites)).toBe("1 h 05");
+  });
+
+  it("écrit les jours courts et longs", () => {
+    expect(formaterJourCourt("2026-11-10T09:00:00Z", "fr")).toBe("mar. 10 nov.");
+    expect(formaterJourLong("2026-11-10T09:00:00Z", "fr")).toBe("mardi 10 novembre");
   });
 });

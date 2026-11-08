@@ -126,3 +126,73 @@ export interface ElementFilAriane {
 }
 
 export type StatutRendezVous = "confirme" | "en_attente" | "annule";
+
+/* --- Données métier (aperçu avec données statiques) --- */
+
+export type StatutRendezVousComplet = StatutRendezVous | "termine" | "absent";
+
+export interface Client extends Horodatage {
+  organisation_id: string;
+  nom_complet: string;
+  telephone: string;
+  email: string | null;
+  nombre_rendez_vous: number;
+  dernier_rendez_vous_le: string | null;
+}
+
+export interface Service extends Horodatage {
+  organisation_id: string;
+  nom: string;
+  categorie: string;
+  duree_minutes: number;
+  prix_mad: number;
+  est_actif: boolean;
+  est_reservable_en_ligne: boolean;
+}
+
+export interface Collaborateur extends Horodatage {
+  organisation_id: string;
+  nom_complet: string;
+  fonction: string;
+  role: Role;
+  /** Horaires du jour de démonstration, null si absent. */
+  horaires_du_jour: { debut: string; fin: string } | null;
+  services_ids: string[];
+}
+
+export interface RendezVous extends Horodatage {
+  organisation_id: string;
+  client_id: string;
+  service_id: string;
+  collaborateur_id: string;
+  debut_le: string;
+  duree_minutes: number;
+  statut: StatutRendezVousComplet;
+  source: "en_ligne" | "accueil" | "telephone";
+}
+
+export type StatutFacture = "payee" | "en_attente" | "en_retard";
+
+export interface Facture extends Horodatage {
+  organisation_id: string;
+  numero: string;
+  client_id: string;
+  emise_le: string;
+  montant_mad: number;
+  statut: StatutFacture;
+}
+
+/** Une plage d'ouverture hebdomadaire ; jour : 1 = lundi ... 7 = dimanche. */
+export interface PlageDisponibilite {
+  collaborateur_id: string;
+  jour: number;
+  debut: string;
+  fin: string;
+}
+
+/** Rendez-vous avec les noms utiles à l'affichage. */
+export interface RendezVousDetaille extends RendezVous {
+  client_nom: string;
+  service_nom: string;
+  collaborateur_nom: string;
+}
