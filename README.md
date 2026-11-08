@@ -1,4 +1,4 @@
-# Maw3id
+# Mawîid
 
 Plateforme SaaS multi-organisations de prise et de gestion de rendez-vous, en français et en arabe.
 

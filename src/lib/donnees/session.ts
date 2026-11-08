@@ -2,13 +2,14 @@ import "server-only";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
-import { CHEMIN_CONNEXION } from "@/config/navigation";
+import { CHEMIN_ACTIVATION_DOUBLE_AUTHENTIFICATION, CHEMIN_CONNEXION } from "@/config/navigation";
 import { obtenirLangue } from "@/i18n/serveur";
+import { exigeDoubleAuthentification } from "@/lib/auth/double-authentification";
 import { determinerRole } from "@/lib/auth/role";
 import { cheminLocalise, obtenirElementNavigation, peutAccederElement } from "@/lib/navigation";
 import { auth } from "@/lib/serveur/auth";
 import { pool } from "@/lib/serveur/base-de-donnees";
-import type { ContexteSession, IdElementNavigation, Notification, OrganisationAvecRole, Resultat, TypeOrganisation, Utilisateur } from "@/types";
+import type { ContexteSession, IdElementNavigation, Langue, Notification, OrganisationAvecRole, Resultat, TypeOrganisation, Utilisateur } from "@/types";
 
 /*
  * Couche d'accès aux données de la session. L'identité et le rôle viennent
@@ -77,21 +78,37 @@ export const obtenirContexteSession = cache(async (): Promise<Resultat<ContexteS
       utilisateur,
       organisationCourante: courante?.organisation ?? null,
       role,
+      doubleAuthentificationActive: user.twoFactorEnabled === true,
       organisations: organisations.map(({ organisation, role: roleMembre }) => ({ organisation, role: roleMembre })),
     },
   };
 });
 
-/** Contexte de l'utilisateur connecté, ou redirection vers la page de connexion. */
-export async function exigerContexteSession(): Promise<ContexteSession> {
+/**
+ * Contexte de l'utilisateur connecté, ou redirection vers la page de connexion.
+ * Un administrateur sans double authentification est envoyé vers son activation,
+ * sauf depuis la page d'activation elle-même.
+ * Dans une Server Action, passer `langue` (lue dans le formulaire) : la langue de
+ * l'URL n'y est pas accessible.
+ */
+export async function exigerContexteSession({
+  avantDoubleAuthentification = false,
+  langue,
+}: { avantDoubleAuthentification?: boolean; langue?: Langue } = {}): Promise<ContexteSession> {
   const contexte = await obtenirContexteSession();
-  if (!contexte.ok) redirect(cheminLocalise(CHEMIN_CONNEXION, await obtenirLangue()));
+  const rediriger = async (chemin: string) => redirect(cheminLocalise(chemin, langue ?? (await obtenirLangue())));
+  if (!contexte.ok) return rediriger(CHEMIN_CONNEXION);
+
+  const { role, doubleAuthentificationActive } = contexte.donnees;
+  if (!avantDoubleAuthentification && exigeDoubleAuthentification(role) && !doubleAuthentificationActive) {
+    return rediriger(CHEMIN_ACTIVATION_DOUBLE_AUTHENTIFICATION);
+  }
   return contexte.donnees;
 }
 
 /** Vérifie côté serveur que le rôle a accès au module ; sinon page introuvable. */
-export async function exigerAccesModule(idModule: IdElementNavigation): Promise<ContexteSession> {
-  const contexte = await exigerContexteSession();
+export async function exigerAccesModule(idModule: IdElementNavigation, langue?: Langue): Promise<ContexteSession> {
+  const contexte = await exigerContexteSession({ langue });
   const element = obtenirElementNavigation(idModule);
   if (!element || !peutAccederElement(element, contexte.role)) notFound();
   return contexte;

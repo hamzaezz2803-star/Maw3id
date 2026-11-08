@@ -1,7 +1,7 @@
 import "server-only";
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
-import { admin, organization } from "better-auth/plugins";
+import { admin, organization, twoFactor } from "better-auth/plugins";
 import {
   controleOrganisation,
   controlePlateforme,
@@ -10,7 +10,7 @@ import {
   rolesOrganisation,
   rolesPlateforme,
 } from "@/lib/auth/droits";
-import { LONGUEUR_MIN_MOT_DE_PASSE } from "@/constants";
+import { LONGUEUR_MIN_MOT_DE_PASSE, NOM_APPLICATION } from "@/constants";
 import { pool } from "./base-de-donnees";
 
 const DUREE_SESSION_SECONDES = 60 * 60 * 8; // une journée de travail
@@ -22,7 +22,7 @@ const DUREE_SESSION_SECONDES = 60 * 60 * 8; // une journée de travail
  * créent des comptes.
  */
 export const auth = betterAuth({
-  appName: "Maw3id",
+  appName: NOM_APPLICATION,
   database: pool,
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL,
@@ -143,6 +143,24 @@ export const auth = betterAuth({
             inviterId: "invite_par_id",
             createdAt: "cree_le",
             teamId: "equipe_id",
+          },
+        },
+      },
+    }),
+    // Double authentification par application (TOTP) et codes de secours, chiffrés en base.
+    twoFactor({
+      issuer: NOM_APPLICATION,
+      schema: {
+        user: { fields: { twoFactorEnabled: "double_authentification_active" } },
+        twoFactor: {
+          modelName: "doubles_authentifications",
+          fields: {
+            secret: "secret_chiffre",
+            backupCodes: "codes_secours_chiffres",
+            userId: "utilisateur_id",
+            verified: "est_verifiee",
+            failedVerificationCount: "nombre_echecs",
+            lockedUntil: "bloquee_jusqu_au",
           },
         },
       },

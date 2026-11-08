@@ -1,5 +1,5 @@
 -- À exécuter UNE FOIS dans DBeaver, connecté à PostgreSQL avec le compte « postgres ».
--- Crée un utilisateur dédié à Maw3id (pas de superutilisateur) et sa base.
+-- Crée un utilisateur dédié à Mawîid (pas de superutilisateur) et sa base.
 -- Remplacer CHANGER_CE_MOT_DE_PASSE par un mot de passe fort avant d'exécuter.
 
 -- 1. Utilisateur de l'application

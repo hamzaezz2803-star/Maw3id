@@ -1,6 +1,6 @@
 import type { Role } from "@/types";
 
-export const NOM_APPLICATION = "Maw3id";
+export const NOM_APPLICATION = "Mawîid";
 
 /** Correspond au point de rupture `lg` de Tailwind : barre latérale repliable à partir d'ici. */
 export const REQUETE_MEDIA_BUREAU = "(min-width: 1024px)";
@@ -18,7 +18,7 @@ export const ROLES_ADMINISTRATION: readonly Role[] = ["administrateur"];
 
 export const ROLES_GESTION: readonly Role[] = ["administrateur", "secretaire"];
 
-/** L'espace plateforme (organisations, utilisateurs) est réservé à l'équipe Maw3id. */
+/** L'espace plateforme (organisations, utilisateurs) est réservé à l'équipe Mawîid. */
 export const ROLES_PLATEFORME: readonly Role[] = ["administrateur_plateforme"];
 
 /** Nombre de lignes par page dans les listes. */

@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { seConnecter, type EtatConnexion } from "@/actions/authentification";
 import { Bouton } from "@/components/ui/Bouton";
+import { ChampMotDePasse } from "@/components/ui/ChampMotDePasse";
 import { ChampTexte } from "@/components/ui/ChampTexte";
 import { MessageErreur } from "@/components/ui/MessageErreur";
 import { useTraductions } from "@/i18n/FournisseurTraductions";
@@ -28,15 +29,16 @@ export function FormulaireConnexion() {
         erreur={erreurChamp("email")}
         required
       />
-      <ChampTexte
+      <ChampMotDePasse
         name="mot_de_passe"
-        type="password"
         autoComplete="current-password"
         libelle={t.connexion.motDePasse}
+        libelleAfficher={t.connexion.afficherMotDePasse}
+        libelleMasquer={t.connexion.masquerMotDePasse}
         erreur={erreurChamp("mot_de_passe")}
         required
       />
-      <Bouton type="submit" enCours={enCours} className="w-full">
+      <Bouton type="submit" taille="grand" enCours={enCours} className="mt-1 w-full">
         {t.connexion.seConnecter}
       </Bouton>
     </form>

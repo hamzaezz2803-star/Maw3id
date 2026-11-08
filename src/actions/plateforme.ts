@@ -3,12 +3,12 @@
 import { randomUUID } from "node:crypto";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { estLangueValide, LANGUE_PAR_DEFAUT } from "@/i18n/config";
 import { ROLE_PLATEFORME_PAR_DEFAUT } from "@/lib/auth/droits";
 import { estEmailDejaUtilise } from "@/lib/auth/erreurs";
 import { exigerAccesModule } from "@/lib/donnees/session";
 import { cheminLocalise } from "@/lib/navigation";
 import { auth } from "@/lib/serveur/auth";
+import { extraireLangue } from "@/lib/serveur/formulaire";
 import { genererIdentifiantUrl } from "@/lib/texte";
 import {
   schemaNouvelleOrganisation,
@@ -27,14 +27,14 @@ export interface EtatFormulaire {
 
 const LONGUEUR_SUFFIXE_URL = 6;
 
+/** Langue du formulaire et valeurs saisies à renvoyer en cas d'erreur (jamais les mots de passe). */
 function separerLangue(formulaire: FormData) {
-  const valeur = String(formulaire.get("langue") ?? "");
-  formulaire.delete("langue");
+  const langue = extraireLangue(formulaire);
   const valeurs: Record<string, string> = {};
   formulaire.forEach((contenu, cle) => {
     if (!cle.includes("mot_de_passe") && typeof contenu === "string") valeurs[cle] = contenu;
   });
-  return { langue: estLangueValide(valeur) ? valeur : LANGUE_PAR_DEFAUT, valeurs };
+  return { langue, valeurs };
 }
 
 async function creerCompte(corps: { email: string; nom: string; motDePasse: string; fonction?: string }) {
@@ -52,8 +52,8 @@ async function creerCompte(corps: { email: string; nom: string; motDePasse: stri
 
 /** Crée une organisation et son premier administrateur. */
 export async function creerOrganisation(_etat: EtatFormulaire, formulaire: FormData): Promise<EtatFormulaire> {
-  await exigerAccesModule("organisations");
   const { langue, valeurs } = separerLangue(formulaire);
+  await exigerAccesModule("organisations", langue);
   const validation = validerFormulaire(schemaNouvelleOrganisation, formulaire);
   if (!validation.ok) return { erreursChamps: validation.erreurs, valeurs };
   const donnees = validation.donnees;
@@ -88,8 +88,8 @@ export async function creerOrganisation(_etat: EtatFormulaire, formulaire: FormD
 
 /** Crée un compte et le rattache à une organisation avec un rôle. */
 export async function creerUtilisateur(_etat: EtatFormulaire, formulaire: FormData): Promise<EtatFormulaire> {
-  await exigerAccesModule("utilisateurs");
   const { langue, valeurs } = separerLangue(formulaire);
+  await exigerAccesModule("utilisateurs", langue);
   if (!formulaire.get("fonction")) formulaire.delete("fonction");
   const validation = validerFormulaire(schemaNouvelUtilisateur, formulaire);
   if (!validation.ok) return { erreursChamps: validation.erreurs, valeurs };

@@ -18,6 +18,10 @@ import { ROLES_ADMINISTRATION, ROLES_EQUIPE, ROLES_GESTION, ROLES_PLATEFORME } f
 import type { ElementNavigation, Role, SectionNavigation } from "@/types";
 
 export const CHEMIN_CONNEXION = "/connexion";
+/** Saisie du code à 6 chiffres après le mot de passe (avant que la session existe). */
+export const CHEMIN_VERIFICATION_CODE = "/connexion/verification";
+/** Activation obligatoire de la double authentification pour les administrateurs. */
+export const CHEMIN_ACTIVATION_DOUBLE_AUTHENTIFICATION = "/securite/double-authentification";
 export const CHEMIN_ACCUEIL = "/tableau-de-bord";
 export const CHEMIN_ACCUEIL_PLATEFORME = "/plateforme/organisations";
 export const CHEMIN_SYSTEME_DESIGN = "/systeme-de-design";

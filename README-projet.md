@@ -1,4 +1,4 @@
-# Maw3id : fiche projet
+# Mawîid : fiche projet
 
 > Ce fichier décrit ce qui est propre au projet. Les règles communes sont dans `.agents/rules/` :
 > `README-qualite-code.md`, `README-securite.md`, `README-base-de-donnees.md`, `README-design.md`.
@@ -7,7 +7,7 @@
 ## Contexte
 
 - **But** : application SaaS multi-organisations de prise et de gestion de rendez-vous.
-- **Utilisateurs** : administrateur plateforme (équipe Maw3id), administrateurs d'organisation, secrétaires, collaborateurs, clients.
+- **Utilisateurs** : administrateur plateforme (équipe Mawîid), administrateurs d'organisation, secrétaires, collaborateurs, clients.
 - **Organisations visées** : cliniques, cabinets dentaires, cabinets d'avocats, cabinets comptables, cabinets de conseil, centres de formation, autres services professionnels.
 - **Marché** : Maroc. Langues : français et arabe.
 - **Statut** : développement. Étape 2 : connexion et espace Administrateur plateforme, sur PostgreSQL local.
@@ -17,6 +17,7 @@
 - Framework : Next.js 16 (App Router, Cache Components), TypeScript strict, Tailwind CSS v4.
 - Base de données : PostgreSQL 18 en local (administrée avec DBeaver), accès via `pg` avec requêtes paramétrées uniquement.
 - Authentification : Better Auth (e-mail et mot de passe, session en cookie httpOnly, limitation des tentatives). Inscription libre fermée.
+- Double authentification : obligatoire pour les rôles `administrateur_plateforme` et `administrateur` (application TOTP + 10 codes de secours, secret et codes chiffrés en base). Activation imposée à la première connexion, sur `/[langue]/securite/double-authentification`.
 - Validation : Zod, côté serveur dans chaque action.
 - Tests : Vitest (logique pure).
 - Scripts de base (migrations, premier administrateur) : `tsx`.
@@ -33,7 +34,7 @@
 
 Les rôles autorisés par module sont déclarés dans `src/config/navigation.ts`. Ils servent à l'affichage **et** sont vérifiés côté serveur au début de chaque page, lecture de données et action (`exigerAccesModule`). Le rôle vient toujours de la session.
 
-**Administrateur plateforme** : membre de l'équipe Maw3id. Crée les organisations et leur premier administrateur. L'**administrateur** d'une organisation crée ensuite ses secrétaires et collaborateurs.
+**Administrateur plateforme** : membre de l'équipe Mawîid. Crée les organisations et leur premier administrateur. L'**administrateur** d'une organisation crée ensuite ses secrétaires et collaborateurs.
 
 ## Règles métier
 
@@ -72,6 +73,7 @@ Les rôles autorisés par module sont déclarés dans `src/config/navigation.ts`
 | Authentification | `better-auth` |
 | Base de données | `pg` |
 | Validation | `zod` |
+| QR code de la double authentification | `qrcode` |
 | Tests | `vitest` |
 | Scripts TypeScript | `tsx` |
 
@@ -117,8 +119,7 @@ src/
 
 | Règle commune | Exception | Raison | Jusqu'à quand |
 | --- | --- | --- | --- |
-| Double authentification (MFA) des administrateurs | Connexion par mot de passe seul | Choix de découpage : MFA (TOTP) à l'étape suivante | Étape MFA |
-| Au moins un test de bout en bout du parcours principal | Aucun test de bout en bout | Demande une base de test dédiée, mise en place avec la MFA | Étape MFA |
+| Au moins un test de bout en bout du parcours principal | Parcours vérifiés à la main par script, pas encore dans le dépôt | Demande une base de test dédiée (`maw3id_test`) | Étape tests de bout en bout |
 | RLS en base | Pas de RLS sur les tables d'authentification | Tables gérées par Better Auth ; la base n'est pas accessible depuis le navigateur. RLS ajoutée sur chaque table métier dès sa création | Première table métier |
 | `Content-Security-Policy` complète | CSP partielle (iframe, plugins, base-uri, formulaires) | Les scripts demandent des nonces | Avant la mise en production |
 | Mot de passe initial saisi par l'administrateur | Pas d'invitation par e-mail | Aucun service d'e-mail pour l'instant ; changement obligatoire du mot de passe à prévoir | Étape e-mails |

@@ -1,7 +1,7 @@
 /** Textes de la page « Système de design » (galerie des composants). */
 export const systemeDesignFr = {
   titre: "Système de design",
-  description: "Les jetons et composants réutilisables sur lesquels chaque module de Maw3id est construit.",
+  description: "Les jetons et composants réutilisables sur lesquels chaque module de Mawîid est construit.",
   couleurs: {
     titre: "Couleurs",
     description: "Définies une seule fois comme jetons du thème dans globals.css.",

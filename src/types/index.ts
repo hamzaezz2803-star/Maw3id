@@ -77,6 +77,7 @@ export interface ContexteSession {
   /** Absente pour un Administrateur plateforme qui n'est membre d'aucune organisation. */
   organisationCourante: Organisation | null;
   role: Role;
+  doubleAuthentificationActive: boolean;
   /** Toutes les organisations de l'utilisateur, pour le sélecteur. */
   organisations: OrganisationAvecRole[];
 }

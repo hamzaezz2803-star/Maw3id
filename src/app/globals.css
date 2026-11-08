@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Jetons de design de Maw3id.
+ * Jetons de design de Mawîid.
  * Chaque couleur, rayon, ombre et style de texte est défini ici une seule fois
  * puis utilisé via les classes Tailwind (bg-primary, text-fg-secondary,
  * rounded-control, text-page-title...). Aucun composant n'a de couleur en dur.
@@ -49,6 +49,28 @@
 
   /* Contour de focus */
   --color-ring: #3b82f6;
+
+  /* Panneau de marque (pages de connexion) : agenda d'une journée sur bleu nuit */
+  --color-nuit: #0a2463;
+  --color-nuit-texte: #c7d7fe;
+  --color-nuit-ligne: rgb(199 215 254 / 0.16);
+  --color-creneau-fort: #3b82f6;
+  --color-creneau-doux: #93c5fd;
+  --color-maintenant: #34d399;
+
+  /* Apparition des créneaux de l'agenda, une seule fois au chargement */
+  --animate-apparition-creneau: apparition-creneau 480ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+  @keyframes apparition-creneau {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 
   /* Échelle typographique : taille, interligne et graisse ensemble.
      Texte courant 16 px minimum, libellés secondaires 14 px minimum. */
@@ -148,6 +170,7 @@
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;

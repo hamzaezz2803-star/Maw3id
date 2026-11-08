@@ -3,7 +3,7 @@ import type { Dictionnaire } from "./fr";
 /** نصوص صفحة « نظام التصميم ». */
 export const systemeDesignAr: Dictionnaire["systemeDesign"] = {
   titre: "نظام التصميم",
-  description: "الرموز والمكونات القابلة لإعادة الاستخدام التي تُبنى عليها كل وحدات Maw3id.",
+  description: "الرموز والمكونات القابلة لإعادة الاستخدام التي تُبنى عليها كل وحدات Mawîid.",
   couleurs: {
     titre: "الألوان",
     description: "معرّفة مرة واحدة كرموز للسمة في globals.css.",
