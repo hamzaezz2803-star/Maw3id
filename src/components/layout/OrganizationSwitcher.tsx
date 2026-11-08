@@ -50,9 +50,11 @@ export function OrganizationSwitcher({
       trigger={trigger}
       triggerLabel={`Current organization: ${organization.name}. Switch organization`}
       triggerClassName={cn(
-        "flex w-full items-center gap-3 rounded-control border border-border p-2 text-start transition-colors hover:bg-surface-muted",
+        "flex w-full items-center gap-3 rounded-control border p-2 text-start transition-colors hover:bg-surface-muted",
         RAIL_ALIGNMENT[mode],
-        mode === "responsive" && "max-lg:border-transparent",
+        // Border only around the expanded switcher, not the icon rail.
+        mode === "full" && "border-border",
+        mode === "responsive" && "border-transparent lg:border-border",
         mode === "rail" && "border-transparent",
       )}
       panelClassName="w-72"

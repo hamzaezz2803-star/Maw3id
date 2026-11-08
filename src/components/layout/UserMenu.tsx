@@ -14,6 +14,7 @@ export function UserMenu({ user, role }: UserMenuProps) {
   return (
     <Dropdown
       triggerLabel={`Account menu for ${user.full_name}`}
+      panelClassName="w-72"
       triggerClassName="flex h-11 items-center gap-2.5 rounded-control px-1 transition-colors hover:bg-secondary sm:h-10 lg:pe-2"
       trigger={
         <>
