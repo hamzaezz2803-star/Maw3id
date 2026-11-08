@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { Bouton } from "@/components/ui/Bouton";
-import { CHEMIN_ACCUEIL, ELEMENT_PARAMETRES } from "@/config/navigation";
+import { ELEMENT_PARAMETRES, obtenirCheminAccueil } from "@/config/navigation";
 import { NOM_APPLICATION } from "@/constants";
 import { useTraductions } from "@/i18n/FournisseurTraductions";
 import { joindreClasses } from "@/lib/classes";
@@ -30,10 +30,12 @@ export function ContenuBarreLaterale({ role, organisations, idOrganisationCouran
 
   return (
     <>
-      <EnteteBarreLaterale mode={mode} surNavigation={surNavigation} />
-      <div className="shrink-0 p-3">
-        <SelecteurOrganisation organisations={organisations} idOrganisationCourante={idOrganisationCourante} mode={mode} />
-      </div>
+      <EnteteBarreLaterale cheminAccueil={obtenirCheminAccueil(role)} mode={mode} surNavigation={surNavigation} />
+      {idOrganisationCourante && (
+        <div className="shrink-0 p-3">
+          <SelecteurOrganisation organisations={organisations} idOrganisationCourante={idOrganisationCourante} mode={mode} />
+        </div>
+      )}
       <NavigationPrincipale role={role} mode={mode} chemin={chemin} surNavigation={surNavigation} />
       {peutAccederElement(ELEMENT_PARAMETRES, role) && (
         <div className="shrink-0 border-t border-border p-3">
@@ -49,12 +51,16 @@ export function ContenuBarreLaterale({ role, organisations, idOrganisationCouran
   );
 }
 
-function EnteteBarreLaterale({ mode, surNavigation }: Pick<ProprietesContenu, "mode" | "surNavigation">) {
+function EnteteBarreLaterale({
+  cheminAccueil,
+  mode,
+  surNavigation,
+}: Pick<ProprietesContenu, "mode" | "surNavigation"> & { cheminAccueil: string }) {
   const { langue, t } = useTraductions();
 
   return (
     <div className={joindreClasses("flex h-navbar shrink-0 items-center gap-3 border-b border-border px-5", ALIGNEMENT_ICONES[mode])}>
-      <Link href={cheminLocalise(CHEMIN_ACCUEIL, langue)} onClick={surNavigation} className="flex items-center gap-2.5 rounded-control">
+      <Link href={cheminLocalise(cheminAccueil, langue)} onClick={surNavigation} className="flex items-center gap-2.5 rounded-control">
         <span
           aria-hidden="true"
           className="flex size-8 items-center justify-center rounded-control bg-primary text-label font-bold text-primary-foreground"
@@ -80,7 +86,7 @@ function NavigationPrincipale({ role, mode, chemin, surNavigation }: ProprietesN
   const { t } = useTraductions();
 
   return (
-    <nav aria-label={t.navigation.navigationPrincipale} className="flex-1 overflow-y-auto px-3 pb-3">
+    <nav aria-label={t.navigation.navigationPrincipale} className="flex-1 overflow-y-auto px-3 py-3">
       {obtenirNavigationPourRole(role).map((section) => (
         <div key={section.id} className="mt-4 first:mt-1">
           {section.avecTitre && (

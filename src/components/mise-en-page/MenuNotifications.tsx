@@ -50,6 +50,7 @@ export async function MenuNotifications({ notifications }: { notifications: Noti
           <Badge variante="primaire">{formaterTexte(t.notifications.nouvelles, { nombre: nombreNonLues })}</Badge>
         )}
       </div>
+      {notifications.length === 0 && <p className="px-2.5 py-6 text-center text-helper text-fg-secondary">{t.notifications.aucune}</p>}
       <ul className="flex max-h-80 flex-col overflow-y-auto">
         {notifications.map((notification) => {
           const Icone = ICONES_TYPE[notification.type];

@@ -41,7 +41,7 @@ export interface Organisation extends Horodatage {
 export interface Utilisateur extends Horodatage {
   nom_complet: string;
   email: string;
-  fonction: string;
+  fonction: string | null;
   avatar_url: string | null;
 }
 
@@ -74,7 +74,8 @@ export interface OrganisationAvecRole {
 
 export interface ContexteSession {
   utilisateur: Utilisateur;
-  organisationCourante: Organisation;
+  /** Absente pour un Administrateur plateforme qui n'est membre d'aucune organisation. */
+  organisationCourante: Organisation | null;
   role: Role;
   /** Toutes les organisations de l'utilisateur, pour le sélecteur. */
   organisations: OrganisationAvecRole[];
@@ -95,9 +96,11 @@ export type IdElementNavigation =
   | "notifications"
   | "finances"
   | "rapports"
-  | "parametres";
+  | "parametres"
+  | "organisations"
+  | "utilisateurs";
 
-export type IdSectionNavigation = "apercu" | "gestion" | "relation-client" | "activite";
+export type IdSectionNavigation = "plateforme" | "apercu" | "gestion" | "relation-client" | "activite";
 
 export interface ElementNavigation {
   /** Identifiant stable, aussi utilisé comme segment d'URL. */

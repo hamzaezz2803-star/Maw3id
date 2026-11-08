@@ -7,22 +7,31 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "base:migrer": "tsx --conditions=react-server --env-file=.env.local scripts/migrer.ts",
+    "base:generer-auth": "tsx --conditions=react-server --env-file=.env.local scripts/generer-migration-auth.ts",
+    "base:creer-admin": "tsx --conditions=react-server --env-file=.env.local scripts/creer-administrateur-plateforme.ts"
   },
   "dependencies": {
+    "better-auth": "^1.7.18",
     "lucide-react": "^1.70.0",
     "next": "16.4.5",
+    "pg": "^8.23.1",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^4.1.12"
   }

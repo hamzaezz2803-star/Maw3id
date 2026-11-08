@@ -10,25 +10,28 @@
 - **Utilisateurs** : administrateur plateforme (équipe Maw3id), administrateurs d'organisation, secrétaires, collaborateurs, clients.
 - **Organisations visées** : cliniques, cabinets dentaires, cabinets d'avocats, cabinets comptables, cabinets de conseil, centres de formation, autres services professionnels.
 - **Marché** : Maroc. Langues : français et arabe.
-- **Statut** : maquette avec données fictives (étape 1 : structure et système de design).
+- **Statut** : développement. Étape 2 : connexion et espace Administrateur plateforme, sur PostgreSQL local.
 
 ## Stack
 
 - Framework : Next.js 16 (App Router, Cache Components), TypeScript strict, Tailwind CSS v4.
-- Base de données : aucune pour l'instant (données fictives dans `src/donnees-fictives/`). Prévue : PostgreSQL, administrée avec DBeaver.
-- Authentification : aucune pour l'instant. Prévue à l'étape suivante, avec un service éprouvé (jamais de système maison).
+- Base de données : PostgreSQL 18 en local (administrée avec DBeaver), accès via `pg` avec requêtes paramétrées uniquement.
+- Authentification : Better Auth (e-mail et mot de passe, session en cookie httpOnly, limitation des tentatives). Inscription libre fermée.
+- Validation : Zod, côté serveur dans chaque action.
 - Tests : Vitest (logique pure).
+- Scripts de base (migrations, premier administrateur) : `tsx`.
 - Hébergement : à définir.
 
 ## Espaces et rôles
 
 | Espace | Chemin | Rôles autorisés |
 | --- | --- | --- |
-| Gestion d'une organisation | `/[langue]/tableau-de-bord`, `/[langue]/clients`... | `administrateur_plateforme`, `administrateur`, `secretaire`, `collaborateur` (selon le module) |
-| Administration de la plateforme | à créer | `administrateur_plateforme` |
+| Connexion | `/[langue]/connexion` | Tout le monde |
+| Gestion d'une organisation | `/[langue]/tableau-de-bord`, `/[langue]/clients`... | `administrateur`, `secretaire`, `collaborateur` (selon le module) |
+| Administration de la plateforme | `/[langue]/plateforme/organisations`, `/[langue]/plateforme/utilisateurs` | `administrateur_plateforme` |
 | Espace client et réservation publique | à créer | `client`, tout le monde |
 
-Les rôles autorisés par module sont déclarés dans `src/config/navigation.ts`. Le filtrage actuel ne concerne que l'affichage : les vraies permissions seront vérifiées côté serveur et en base (RLS).
+Les rôles autorisés par module sont déclarés dans `src/config/navigation.ts`. Ils servent à l'affichage **et** sont vérifiés côté serveur au début de chaque page, lecture de données et action (`exigerAccesModule`). Le rôle vient toujours de la session.
 
 **Administrateur plateforme** : membre de l'équipe Maw3id. Crée les organisations et leur premier administrateur. L'**administrateur** d'une organisation crée ensuite ses secrétaires et collaborateurs.
 
@@ -40,7 +43,8 @@ Les rôles autorisés par module sont déclarés dans `src/config/navigation.ts`
 
 ## Données
 
-- Tables prévues : `organisations`, `utilisateurs`, `membres`, `notifications` (puis services, clients, rendez-vous...).
+- Tables : `utilisateurs`, `sessions`, `comptes`, `verifications`, `limites_requetes`, `organisations`, `membres`, `invitations` (créées par Better Auth, renommées en français), puis services, clients, rendez-vous...
+- Schéma modifié uniquement par les migrations versionnées de `migrations/`, appliquées avec `npm run base:migrer`.
 - Colonnes en `snake_case` français, avec `id` (uuid), `cree_le`, `modifie_le` sur chaque table.
 - Données sensibles : un cabinet médical ou dentaire peut enregistrer des données de santé. À traiter avec les règles renforcées avant toute mise en production.
 - Données à ne jamais collecter sans besoin : CIN, date de naissance, adresse.
@@ -65,12 +69,19 @@ Les rôles autorisés par module sont déclarés dans `src/config/navigation.ts`
 | Besoin | Bibliothèque |
 | --- | --- |
 | Icônes | `lucide-react` |
+| Authentification | `better-auth` |
+| Base de données | `pg` |
+| Validation | `zod` |
 | Tests | `vitest` |
+| Scripts TypeScript | `tsx` |
 
 ## Structure des dossiers
 
 ```text
+migrations/                       # Migrations SQL versionnées (ordre des numéros)
+scripts/                          # migrer, generer-migration-auth, creer-administrateur-plateforme, sql/
 src/
+├── actions/                      # Server Actions (connexion, création d'organisations et d'utilisateurs)
 ├── app/
 │   ├── [langue]/                 # fr ou ar : mise en page racine (lang, dir, polices)
 │   │   ├── (application)/        # Espace de gestion avec barre latérale
@@ -90,10 +101,13 @@ src/
 │   └── ui/                       # Composants réutilisables
 ├── config/navigation.ts          # Modules, icônes et rôles autorisés
 ├── constants/                    # Constantes de l'application
-├── donnees-fictives/             # Données inventées (lues seulement par lib/donnees)
+├── donnees-fictives/             # Exemples de la galerie du système de design
 ├── i18n/                         # Langues, dictionnaires, accès serveur et client
 ├── lib/
-│   ├── donnees/                  # Couche d'accès aux données (PostgreSQL plus tard)
+│   ├── auth/                     # Rôles, droits, erreurs d'authentification
+│   ├── donnees/                  # Couche d'accès aux données (session, plateforme)
+│   ├── serveur/                  # Connexion PostgreSQL et configuration Better Auth (serveur uniquement)
+│   ├── validation/               # Schémas Zod des formulaires
 │   └── *.ts                      # Logique pure testée (formatage, navigation, pagination)
 ├── proxy.ts                      # Ajoute le préfixe de langue aux adresses
 └── types/                        # Types partagés
@@ -103,19 +117,31 @@ src/
 
 | Règle commune | Exception | Raison | Jusqu'à quand |
 | --- | --- | --- | --- |
-| Au moins un test de bout en bout du parcours principal | Aucun test de bout en bout | Le parcours principal (connexion, réservation) n'existe pas encore | Étape connexion |
-| Vérifier l'utilisateur et son rôle, RLS, session en cookie | Aucune authentification, utilisateur fictif | Étape 1 limitée au frontend | Étape connexion |
-| `Content-Security-Policy` complète | CSP partielle (iframe, plugins, base-uri, formulaires) | Les scripts demandent des nonces, à mettre en place avec l'authentification | Étape connexion |
+| Double authentification (MFA) des administrateurs | Connexion par mot de passe seul | Choix de découpage : MFA (TOTP) à l'étape suivante | Étape MFA |
+| Au moins un test de bout en bout du parcours principal | Aucun test de bout en bout | Demande une base de test dédiée, mise en place avec la MFA | Étape MFA |
+| RLS en base | Pas de RLS sur les tables d'authentification | Tables gérées par Better Auth ; la base n'est pas accessible depuis le navigateur. RLS ajoutée sur chaque table métier dès sa création | Première table métier |
+| `Content-Security-Policy` complète | CSP partielle (iframe, plugins, base-uri, formulaires) | Les scripts demandent des nonces | Avant la mise en production |
+| Mot de passe initial saisi par l'administrateur | Pas d'invitation par e-mail | Aucun service d'e-mail pour l'instant ; changement obligatoire du mot de passe à prévoir | Étape e-mails |
 | Pages légales et pied de page (site public) | Absentes | Pas encore de site public | Création de la réservation publique |
 
 ## Installation et lancement
 
+1. Dans DBeaver (connecté avec `postgres`), exécuter `scripts/sql/creer-base.sql` après y avoir mis un mot de passe fort.
+2. Remplir `.env.local` (modèle : `.env.example`) : `DATABASE_URL`, `BETTER_AUTH_SECRET`, et les variables `ADMIN_PLATEFORME_*`.
+3. Puis :
+
 ```bash
 npm install
+npm run base:migrer
+npm run base:creer-admin
 npm run dev
 ```
 
-Ouvrir http://localhost:3000 (redirige vers `/fr/tableau-de-bord`, ou `/ar/...` si le navigateur est en arabe).
+4. Retirer `ADMIN_PLATEFORME_MOT_DE_PASSE` de `.env.local`.
+
+Ouvrir http://localhost:3000 : la page de connexion s'affiche.
+
+Nouvelle table d'authentification (après un changement de `src/lib/serveur/auth.ts`) : `npm run base:generer-auth -- 0003_description`, relire le fichier, puis `npm run base:migrer`.
 
 ## Avant de terminer une tâche
 

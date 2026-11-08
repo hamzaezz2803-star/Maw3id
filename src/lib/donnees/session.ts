@@ -1,51 +1,103 @@
+import "server-only";
+import { headers } from "next/headers";
+import { notFound, redirect } from "next/navigation";
+import { cache } from "react";
+import { CHEMIN_CONNEXION } from "@/config/navigation";
+import { obtenirLangue } from "@/i18n/serveur";
+import { determinerRole } from "@/lib/auth/role";
+import { cheminLocalise, obtenirElementNavigation, peutAccederElement } from "@/lib/navigation";
+import { auth } from "@/lib/serveur/auth";
+import { pool } from "@/lib/serveur/base-de-donnees";
+import type { ContexteSession, IdElementNavigation, Notification, OrganisationAvecRole, Resultat, TypeOrganisation, Utilisateur } from "@/types";
+
 /*
- * Couche d'accès aux données du contexte de session.
- * Les pages et composants lisent les données uniquement par ces fonctions :
- * les données fictives seront remplacées par PostgreSQL ici, sans toucher aux pages.
+ * Couche d'accès aux données de la session. L'identité et le rôle viennent
+ * toujours de la session (cookie httpOnly), jamais de l'URL ou d'un formulaire.
  */
-import { NOTIFICATIONS_FICTIVES } from "@/donnees-fictives/notifications";
-import {
-  ID_ORGANISATION_COURANTE_FICTIVE,
-  ORGANISATIONS_FICTIVES,
-} from "@/donnees-fictives/organisations";
-import { MEMBRES_FICTIFS, UTILISATEUR_FICTIF } from "@/donnees-fictives/utilisateurs";
-import type { ContexteSession, Notification, OrganisationAvecRole, Resultat } from "@/types";
 
-const ERREUR_AUCUNE_ORGANISATION = "aucune_organisation";
-
-function listerOrganisationsDeUtilisateur(utilisateurId: string): OrganisationAvecRole[] {
-  return MEMBRES_FICTIFS.filter((membre) => membre.utilisateur_id === utilisateurId).flatMap(
-    (membre) => {
-      const organisation = ORGANISATIONS_FICTIVES.find((item) => item.id === membre.organisation_id);
-      return organisation ? [{ organisation, role: membre.role }] : [];
-    },
-  );
+interface LigneOrganisationMembre {
+  id: string;
+  nom: string;
+  type: TypeOrganisation;
+  ville: string;
+  logo_url: string | null;
+  cree_le: Date;
+  modifie_le: Date;
+  role: string;
 }
 
-export async function obtenirContexteSession(): Promise<Resultat<ContexteSession>> {
-  const organisations = listerOrganisationsDeUtilisateur(UTILISATEUR_FICTIF.id);
-  const courante =
-    organisations.find((item) => item.organisation.id === ID_ORGANISATION_COURANTE_FICTIVE) ??
-    organisations[0];
+async function listerOrganisationsDuMembre(utilisateurId: string): Promise<(OrganisationAvecRole & { roleBrut: string })[]> {
+  const resultat = await pool.query<LigneOrganisationMembre>(
+    `select o.id, o.nom, o.type, o.ville, o.logo_url, o.cree_le, o.modifie_le, m.role
+       from membres m
+       join organisations o on o.id = m.organisation_id
+      where m.utilisateur_id = $1
+      order by o.nom`,
+    [utilisateurId],
+  );
+  return resultat.rows.flatMap((ligne) => {
+    const role = determinerRole(null, ligne.role);
+    if (!role) return [];
+    const { role: roleBrut, cree_le, modifie_le, ...organisation } = ligne;
+    return [{
+      organisation: { ...organisation, cree_le: cree_le.toISOString(), modifie_le: modifie_le.toISOString() },
+      role,
+      roleBrut,
+    }];
+  });
+}
 
-  if (!courante) return { ok: false, erreur: ERREUR_AUCUNE_ORGANISATION };
+/** Lit la session une seule fois par requête. */
+const lireSession = cache(async () => auth.api.getSession({ headers: await headers() }));
+
+export const obtenirContexteSession = cache(async (): Promise<Resultat<ContexteSession>> => {
+  const session = await lireSession();
+  if (!session) return { ok: false, erreur: "non_connecte" };
+
+  const { user } = session;
+  const organisations = await listerOrganisationsDuMembre(user.id);
+  const courante =
+    organisations.find((item) => item.organisation.id === session.session.activeOrganizationId) ?? organisations[0];
+  const role = determinerRole(user.role, courante?.roleBrut);
+  if (!role) return { ok: false, erreur: "aucun_acces" };
+
+  const utilisateur: Utilisateur = {
+    id: user.id,
+    nom_complet: user.name,
+    email: user.email,
+    fonction: user.fonction ?? null,
+    avatar_url: user.image ?? null,
+    cree_le: user.createdAt.toISOString(),
+    modifie_le: user.updatedAt.toISOString(),
+  };
 
   return {
     ok: true,
     donnees: {
-      utilisateur: UTILISATEUR_FICTIF,
-      organisationCourante: courante.organisation,
-      role: courante.role,
-      organisations,
+      utilisateur,
+      organisationCourante: courante?.organisation ?? null,
+      role,
+      organisations: organisations.map(({ organisation, role: roleMembre }) => ({ organisation, role: roleMembre })),
     },
   };
+});
+
+/** Contexte de l'utilisateur connecté, ou redirection vers la page de connexion. */
+export async function exigerContexteSession(): Promise<ContexteSession> {
+  const contexte = await obtenirContexteSession();
+  if (!contexte.ok) redirect(cheminLocalise(CHEMIN_CONNEXION, await obtenirLangue()));
+  return contexte.donnees;
 }
 
-export async function obtenirNotificationsRecentes(
-  organisationId: string,
-): Promise<Resultat<Notification[]>> {
-  return {
-    ok: true,
-    donnees: NOTIFICATIONS_FICTIVES.filter((item) => item.organisation_id === organisationId),
-  };
+/** Vérifie côté serveur que le rôle a accès au module ; sinon page introuvable. */
+export async function exigerAccesModule(idModule: IdElementNavigation): Promise<ContexteSession> {
+  const contexte = await exigerContexteSession();
+  const element = obtenirElementNavigation(idModule);
+  if (!element || !peutAccederElement(element, contexte.role)) notFound();
+  return contexte;
+}
+
+/** Les notifications seront stockées en base à l'étape « Notifications ». */
+export async function obtenirNotificationsRecentes(): Promise<Resultat<Notification[]>> {
+  return { ok: true, donnees: [] };
 }

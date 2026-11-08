@@ -1,3 +1,4 @@
+import { accesAr } from "./ar-acces";
 import { systemeDesignAr } from "./ar-systeme-design";
 import type { Dictionnaire } from "./fr";
 
@@ -34,8 +35,11 @@ export const ar: Dictionnaire = {
       finances: "المالية",
       rapports: "التقارير",
       parametres: "الإعدادات",
+      organisations: "المؤسسات",
+      utilisateurs: "المستخدمون",
     },
     sections: {
+      plateforme: "المنصة",
       apercu: "نظرة عامة",
       gestion: "الإدارة",
       "relation-client": "العلاقة مع العملاء",
@@ -79,6 +83,7 @@ export const ar: Dictionnaire = {
     libelleAvecNonLues: "الإشعارات، {nombre} غير مقروءة",
     nouvelles: "{nombre} جديدة",
     voirTout: "عرض كل الإشعارات",
+    aucune: "لا توجد إشعارات حاليًا.",
     types: {
       nouvelle_reservation: {
         titre: "حجز جديد عبر الإنترنت",
@@ -131,4 +136,5 @@ export const ar: Dictionnaire = {
     annule: "ملغى",
   },
   systemeDesign: systemeDesignAr,
+  ...accesAr,
 };

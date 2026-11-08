@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { obtenirCheminAccueil } from "@/config/navigation";
+import { lireNumeroPage } from "./pagination";
 import {
   cheminLocalise,
   obtenirNavigationPourRole,
@@ -24,6 +26,28 @@ describe("obtenirNavigationPourRole", () => {
 
   it("ne montre rien de l'espace de gestion au client", () => {
     expect(obtenirNavigationPourRole("client")).toEqual([]);
+  });
+
+  it("réserve l'espace plateforme à l'Administrateur plateforme", () => {
+    expect(idsVisibles("administrateur_plateforme")).toEqual(["organisations", "utilisateurs"]);
+    expect(idsVisibles("administrateur")).not.toContain("organisations");
+  });
+});
+
+describe("obtenirCheminAccueil", () => {
+  it("envoie chaque rôle vers son espace", () => {
+    expect(obtenirCheminAccueil("administrateur_plateforme")).toBe("/plateforme/organisations");
+    expect(obtenirCheminAccueil("secretaire")).toBe("/tableau-de-bord");
+  });
+});
+
+describe("lireNumeroPage", () => {
+  it("n'accepte qu'un entier positif venant de l'URL", () => {
+    expect(lireNumeroPage("3")).toBe(3);
+    expect(lireNumeroPage(["2", "5"])).toBe(2);
+    expect(lireNumeroPage("-1")).toBe(1);
+    expect(lireNumeroPage("abc")).toBe(1);
+    expect(lireNumeroPage(undefined)).toBe(1);
   });
 });
 

@@ -1,6 +1,6 @@
 import { ChampRecherche } from "@/components/ui/ChampRecherche";
 import { obtenirTraductions } from "@/i18n/serveur";
-import type { Notification, Organisation, Role, Utilisateur } from "@/types";
+import type { Notification, Role, Utilisateur } from "@/types";
 import { BoutonBarreLaterale } from "./BoutonBarreLaterale";
 import { FilArianeNavigation } from "./FilArianeNavigation";
 import { MenuNotifications } from "./MenuNotifications";
@@ -10,18 +10,19 @@ import { SelecteurLangue } from "./SelecteurLangue";
 interface ProprietesBarreNavigation {
   utilisateur: Utilisateur;
   role: Role;
-  organisation: Organisation;
+  /** Nom de l'organisation courante, ou de la plateforme. */
+  nomEspace: string;
   notifications: Notification[];
 }
 
-export async function BarreNavigation({ utilisateur, role, organisation, notifications }: ProprietesBarreNavigation) {
+export async function BarreNavigation({ utilisateur, role, nomEspace, notifications }: ProprietesBarreNavigation) {
   const { t } = await obtenirTraductions();
 
   return (
     <header className="sticky top-0 z-30 flex h-navbar shrink-0 items-center gap-2 border-b border-border bg-surface px-4 sm:gap-4 sm:px-6">
       <BoutonBarreLaterale />
       <div className="min-w-0 flex-1">
-        <FilArianeNavigation nomOrganisation={organisation.nom} />
+        <FilArianeNavigation nomEspace={nomEspace} role={role} />
       </div>
       <ChampRecherche
         libelle={t.barreNavigation.rechercheLibelle}

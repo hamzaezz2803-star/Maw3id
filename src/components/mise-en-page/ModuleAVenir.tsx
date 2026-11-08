@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { classesBouton } from "@/components/ui/Bouton";
 import { Carte } from "@/components/ui/Carte";
 import { EtatVide } from "@/components/ui/EtatVide";
 import { CHEMIN_ACCUEIL } from "@/config/navigation";
 import { obtenirTraductions } from "@/i18n/serveur";
 import { formaterTexte } from "@/lib/formatage";
+import { exigerAccesModule } from "@/lib/donnees/session";
 import { cheminLocalise, obtenirElementNavigation } from "@/lib/navigation";
 import type { IdElementNavigation } from "@/types";
 import { ConteneurPage } from "./ConteneurPage";
@@ -18,9 +18,8 @@ export async function genererMetadonneesModule(idModule: IdElementNavigation): P
 
 /** Page provisoire d'un module qui sera construit dans une prochaine étape. */
 export async function ModuleAVenir({ idModule }: { idModule: IdElementNavigation }) {
+  await exigerAccesModule(idModule);
   const element = obtenirElementNavigation(idModule);
-  if (!element) notFound();
-
   const { langue, t } = await obtenirTraductions();
   const libelle = t.navigation.libelles[idModule];
 
@@ -28,7 +27,7 @@ export async function ModuleAVenir({ idModule }: { idModule: IdElementNavigation
     <ConteneurPage titre={libelle}>
       <Carte>
         <EtatVide
-          icone={element.icone}
+          icone={element?.icone}
           titre={formaterTexte(t.moduleAVenir.titre, { module: libelle })}
           description={t.moduleAVenir.description}
           action={

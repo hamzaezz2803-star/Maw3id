@@ -3,20 +3,40 @@ import {
   Briefcase,
   CalendarCheck,
   CalendarDays,
+  Building2,
   ChartColumn,
   Clock,
   Globe,
   LayoutDashboard,
   Settings,
+  UserCog,
   Users,
   UsersRound,
   Wallet,
 } from "lucide-react";
-import { ROLES_ADMINISTRATION, ROLES_EQUIPE, ROLES_GESTION } from "@/constants";
-import type { ElementNavigation, SectionNavigation } from "@/types";
+import { ROLES_ADMINISTRATION, ROLES_EQUIPE, ROLES_GESTION, ROLES_PLATEFORME } from "@/constants";
+import type { ElementNavigation, Role, SectionNavigation } from "@/types";
+
+export const CHEMIN_CONNEXION = "/connexion";
+export const CHEMIN_ACCUEIL = "/tableau-de-bord";
+export const CHEMIN_ACCUEIL_PLATEFORME = "/plateforme/organisations";
+export const CHEMIN_SYSTEME_DESIGN = "/systeme-de-design";
+
+/** Page d'arrivée après connexion, selon le rôle. */
+export function obtenirCheminAccueil(role: Role): string {
+  return ROLES_PLATEFORME.includes(role) ? CHEMIN_ACCUEIL_PLATEFORME : CHEMIN_ACCUEIL;
+}
 
 /** Les libellés sont dans les dictionnaires (navigation.libelles). */
 export const NAVIGATION: SectionNavigation[] = [
+  {
+    id: "plateforme",
+    avecTitre: true,
+    elements: [
+      { id: "organisations", chemin: "/plateforme/organisations", icone: Building2, roles: ROLES_PLATEFORME },
+      { id: "utilisateurs", chemin: "/plateforme/utilisateurs", icone: UserCog, roles: ROLES_PLATEFORME },
+    ],
+  },
   {
     id: "apercu",
     avecTitre: false,
@@ -61,6 +81,3 @@ export const ELEMENT_PARAMETRES: ElementNavigation = {
   icone: Settings,
   roles: ROLES_ADMINISTRATION,
 };
-
-export const CHEMIN_ACCUEIL = "/tableau-de-bord";
-export const CHEMIN_SYSTEME_DESIGN = "/systeme-de-design";

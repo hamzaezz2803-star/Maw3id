@@ -9,7 +9,7 @@ import { useBarreLaterale } from "./FournisseurBarreLaterale";
 export interface ProprietesBarreLaterale {
   role: Role;
   organisations: OrganisationAvecRole[];
-  idOrganisationCourante: string;
+  idOrganisationCourante: string | null;
 }
 
 /** Colonne pour ordinateur et tablette, plus le tiroir mobile : même contenu. */

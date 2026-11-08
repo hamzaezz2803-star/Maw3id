@@ -1,4 +1,5 @@
 import { Bell, ChevronDown, LogOut, Settings } from "lucide-react";
+import { seDeconnecter } from "@/actions/authentification";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { ElementMenu, MenuDeroulant, SeparateurMenu } from "@/components/ui/MenuDeroulant";
@@ -40,7 +41,7 @@ export async function MenuUtilisateur({ utilisateur, role }: ProprietesMenuUtili
       </div>
       <div className="flex flex-wrap gap-1.5 px-2.5 pb-2">
         <Badge variante="primaire">{t.roles[role]}</Badge>
-        <Badge>{utilisateur.fonction}</Badge>
+        {utilisateur.fonction && <Badge>{utilisateur.fonction}</Badge>}
       </div>
       <SeparateurMenu />
       <ElementMenu lien={cheminLocalise("/parametres", langue)}>
@@ -52,11 +53,13 @@ export async function MenuUtilisateur({ utilisateur, role }: ProprietesMenuUtili
         {t.utilisateur.preferencesNotifications}
       </ElementMenu>
       <SeparateurMenu />
-      {/* Sans effet tant que l'authentification n'est pas en place. */}
-      <ElementMenu ton="danger">
-        <LogOut aria-hidden="true" className="rtl:-scale-x-100" />
-        {t.utilisateur.deconnexion}
-      </ElementMenu>
+      <form action={seDeconnecter}>
+        <input type="hidden" name="langue" value={langue} />
+        <ElementMenu ton="danger" soumettre>
+          <LogOut aria-hidden="true" className="rtl:-scale-x-100" />
+          {t.utilisateur.deconnexion}
+        </ElementMenu>
+      </form>
     </MenuDeroulant>
   );
 }

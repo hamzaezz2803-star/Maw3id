@@ -12,16 +12,20 @@ export const FUSEAU_HORAIRE_PAR_DEFAUT = "Africa/Casablanca";
 export const COULEUR_THEME_NAVIGATEUR = "#ffffff";
 
 /** Rôles qui travaillent dans l'espace de gestion d'une organisation. */
-export const ROLES_EQUIPE: readonly Role[] = [
-  "administrateur_plateforme",
-  "administrateur",
-  "secretaire",
-  "collaborateur",
-];
+export const ROLES_EQUIPE: readonly Role[] = ["administrateur", "secretaire", "collaborateur"];
 
-export const ROLES_ADMINISTRATION: readonly Role[] = ["administrateur_plateforme", "administrateur"];
+export const ROLES_ADMINISTRATION: readonly Role[] = ["administrateur"];
 
-export const ROLES_GESTION: readonly Role[] = [...ROLES_ADMINISTRATION, "secretaire"];
+export const ROLES_GESTION: readonly Role[] = ["administrateur", "secretaire"];
+
+/** L'espace plateforme (organisations, utilisateurs) est réservé à l'équipe Maw3id. */
+export const ROLES_PLATEFORME: readonly Role[] = ["administrateur_plateforme"];
+
+/** Nombre de lignes par page dans les listes. */
+export const TAILLE_PAGE = 20;
+
+/** Longueur minimale d'un mot de passe (même valeur que la configuration Better Auth). */
+export const LONGUEUR_MIN_MOT_DE_PASSE = 12;
 
 /** Nombre de pages affichées de chaque côté de la page courante dans la pagination. */
 export const PAGES_VOISINES_PAGINATION = 1;

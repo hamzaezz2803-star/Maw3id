@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LayoutDashboard, Palette, TriangleAlert } from "lucide-react";
+import { LayoutDashboard, Palette } from "lucide-react";
 import { ConteneurPage } from "@/components/mise-en-page/ConteneurPage";
-import { PanneauMessage } from "@/components/mise-en-page/PanneauMessage";
 import { classesBouton } from "@/components/ui/Bouton";
 import { Carte } from "@/components/ui/Carte";
 import { EtatVide } from "@/components/ui/EtatVide";
 import { CHEMIN_SYSTEME_DESIGN } from "@/config/navigation";
 import { obtenirTraductions } from "@/i18n/serveur";
-import { obtenirContexteSession } from "@/lib/donnees/session";
+import { exigerAccesModule } from "@/lib/donnees/session";
 import { formaterTexte } from "@/lib/formatage";
 import { cheminLocalise } from "@/lib/navigation";
 
@@ -18,15 +17,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PageTableauDeBord() {
-  const [{ langue, t }, session] = await Promise.all([obtenirTraductions(), obtenirContexteSession()]);
-  if (!session.ok) {
-    return <PanneauMessage icone={TriangleAlert} titre={t.commun.erreurTitre} description={t.commun.erreurDescription} />;
-  }
+  const [{ langue, t }, { utilisateur, organisationCourante, role }] = await Promise.all([
+    obtenirTraductions(),
+    exigerAccesModule("tableau-de-bord"),
+  ]);
+  const nomOrganisation = organisationCourante?.nom ?? "";
 
-  const { utilisateur, organisationCourante, role } = session.donnees;
   const details = [
-    { libelle: t.tableauDeBord.organisation, valeur: organisationCourante.nom },
-    { libelle: t.tableauDeBord.typeOrganisation, valeur: t.typesOrganisation[organisationCourante.type] },
+    { libelle: t.tableauDeBord.organisation, valeur: nomOrganisation },
+    { libelle: t.tableauDeBord.typeOrganisation, valeur: organisationCourante ? t.typesOrganisation[organisationCourante.type] : "" },
     { libelle: t.tableauDeBord.votreRole, valeur: t.roles[role] },
   ];
 
@@ -35,7 +34,7 @@ export default async function PageTableauDeBord() {
       titre={t.navigation.libelles["tableau-de-bord"]}
       description={formaterTexte(t.tableauDeBord.bienvenue, {
         prenom: utilisateur.nom_complet.split(" ")[0],
-        organisation: organisationCourante.nom,
+        organisation: nomOrganisation,
       })}
       actions={
         <Link href={cheminLocalise(CHEMIN_SYSTEME_DESIGN, langue)} className={classesBouton({ variante: "contour" })}>

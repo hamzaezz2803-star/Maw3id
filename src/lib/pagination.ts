@@ -17,3 +17,9 @@ export function obtenirJetonsPages(page: number, nombrePages: number): JetonPage
 
   return jetons;
 }
+
+/** Lit le numéro de page d'un paramètre d'URL (entrée externe) : entier positif, 1 par défaut. */
+export function lireNumeroPage(valeur: string | string[] | undefined): number {
+  const nombre = Number(Array.isArray(valeur) ? valeur[0] : valeur);
+  return Number.isInteger(nombre) && nombre > 0 ? nombre : 1;
+}

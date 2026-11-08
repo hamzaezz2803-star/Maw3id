@@ -73,12 +73,14 @@ interface ProprietesElementMenu {
   /** Actions destructrices, comme la déconnexion. */
   ton?: "normal" | "danger";
   desactive?: boolean;
+  /** Bouton d'envoi d'un formulaire (ex. déconnexion). */
+  soumettre?: boolean;
   className?: string;
   children: ReactNode;
 }
 
 /** Un lien (avec `lien`) ou un bouton. Ferme le menu une fois utilisé. */
-export function ElementMenu({ lien, ton = "normal", desactive, className, children }: ProprietesElementMenu) {
+export function ElementMenu({ lien, ton = "normal", desactive, soumettre, className, children }: ProprietesElementMenu) {
   const classes = joindreClasses(CLASSES_ELEMENT, ton === "danger" && "text-danger [&_svg]:text-danger", className);
 
   if (lien) {
@@ -90,7 +92,7 @@ export function ElementMenu({ lien, ton = "normal", desactive, className, childr
   }
 
   return (
-    <button type="button" disabled={desactive} onClick={fermerMenuParent} className={classes}>
+    <button type={soumettre ? "submit" : "button"} disabled={desactive} onClick={fermerMenuParent} className={classes}>
       {children}
     </button>
   );

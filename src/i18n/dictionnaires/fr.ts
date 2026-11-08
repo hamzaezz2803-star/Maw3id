@@ -1,3 +1,4 @@
+import { accesFr } from "./fr-acces";
 import { systemeDesignFr } from "./fr-systeme-design";
 
 /**
@@ -37,8 +38,11 @@ export const fr = {
       finances: "Finances",
       rapports: "Rapports",
       parametres: "Paramètres",
+      organisations: "Organisations",
+      utilisateurs: "Utilisateurs",
     },
     sections: {
+      plateforme: "Plateforme",
       apercu: "Aperçu",
       gestion: "Gestion",
       "relation-client": "Relation client",
@@ -82,6 +86,7 @@ export const fr = {
     libelleAvecNonLues: "Notifications, {nombre} non lues",
     nouvelles: "{nombre} nouvelles",
     voirTout: "Voir toutes les notifications",
+    aucune: "Aucune notification pour le moment.",
     types: {
       nouvelle_reservation: {
         titre: "Nouvelle réservation en ligne",
@@ -135,6 +140,7 @@ export const fr = {
     annule: "Annulé",
   },
   systemeDesign: systemeDesignFr,
+  ...accesFr,
 };
 
 export type Dictionnaire = typeof fr;

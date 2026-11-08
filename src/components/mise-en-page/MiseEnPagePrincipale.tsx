@@ -27,13 +27,13 @@ export async function MiseEnPagePrincipale({ session, notifications, children }:
         <BarreLaterale
           role={session.role}
           organisations={session.organisations}
-          idOrganisationCourante={session.organisationCourante.id}
+          idOrganisationCourante={session.organisationCourante?.id ?? null}
         />
         <div className="flex min-w-0 flex-1 flex-col">
           <BarreNavigation
             utilisateur={session.utilisateur}
             role={session.role}
-            organisation={session.organisationCourante}
+            nomEspace={session.organisationCourante?.nom ?? t.plateforme.nom}
             notifications={notifications}
           />
           <main id="contenu-principal" tabIndex={-1} className="flex-1 focus:outline-none">
