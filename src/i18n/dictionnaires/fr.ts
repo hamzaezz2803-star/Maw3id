@@ -1,4 +1,6 @@
 import { accesFr } from "./fr-acces";
+import { activiteFr } from "./fr-activite";
+import { gestionFr } from "./fr-gestion";
 import { systemeDesignFr } from "./fr-systeme-design";
 
 /**
@@ -141,6 +143,8 @@ export const fr = {
   },
   systemeDesign: systemeDesignFr,
   ...accesFr,
+  ...activiteFr,
+  ...gestionFr,
 };
 
 export type Dictionnaire = typeof fr;

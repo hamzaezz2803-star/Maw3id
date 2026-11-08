@@ -1,0 +1,66 @@
+import type { activiteFr } from "./fr-activite";
+
+/** نصوص لوحة التحكم والمواعيد والتقويم والعملاء. */
+export const activiteAr: typeof activiteFr = {
+  apercu: {
+    donneesDemo: "معاينة ببيانات تجريبية",
+    statuts: { confirme: "مؤكد", en_attente: "في انتظار التأكيد", annule: "ملغى", termine: "منتهٍ", absent: "متغيب" },
+    sources: { en_ligne: "عبر الإنترنت", accueil: "الاستقبال", telephone: "الهاتف" },
+    statutsFacture: { payee: "مدفوعة", en_attente: "في الانتظار", en_retard: "متأخرة" },
+    unites: { heure: "س", minute: "د" },
+    maintenant: "الآن",
+    plage: "من {debut} إلى {fin}",
+  },
+  accueil: {
+    bonjour: "مرحبًا {prenom}",
+    resume: "{nombre} موعدًا اليوم، منها {attente} في انتظار التأكيد.",
+    prochain: "الموعد القادم على الساعة {heure}: {client}، {service}.",
+    aucunProchain: "لا توجد مواعيد أخرى اليوم.",
+    nouveauRendezVous: "موعد جديد",
+    agendaDuJour: "أجندة اليوم",
+    voirCalendrier: "عرض التقويم",
+    aConfirmer: "في انتظار التأكيد",
+    aConfirmerDescription: "طلبات وصلت عبر الإنترنت أو الهاتف.",
+    confirmer: "تأكيد",
+    rienAConfirmer: "لا توجد طلبات في الانتظار.",
+    activite: "النشاط الأخير",
+    indicateurs: {
+      rendezVousSemaine: "مواعيد هذا الأسبوع",
+      variation: "{valeur} % مقارنة بالأسبوع الماضي",
+      tauxOccupation: "نسبة امتلاء الأجندة اليوم",
+      encaisseMois: "المحصَّل في نونبر",
+      nouveauxClients: "عملاء جدد هذا الأسبوع",
+    },
+  },
+  rendezVous: {
+    description: "كل مواعيد الأسبوع مع حالتها.",
+    nouveau: "موعد جديد",
+    filtres: { tous: "الكل", en_attente: "في انتظار التأكيد", confirme: "المؤكدة", annule: "الملغاة" },
+    filtrerParStatut: "التصفية حسب الحالة",
+    colonnes: {
+      date: "التاريخ",
+      client: "العميل",
+      service: "الخدمة",
+      collaborateur: "المتعاون",
+      duree: "المدة",
+      source: "المصدر",
+      statut: "الحالة",
+    },
+    aucun: "لا توجد مواعيد بهذه الحالة.",
+  },
+  calendrier: {
+    description: "أسبوع الفريق كله، ساعة بساعة.",
+    semaine: "أسبوع {debut} إلى {fin}",
+    aujourdHui: "اليوم",
+    semainePrecedente: "الأسبوع السابق",
+    semaineSuivante: "الأسبوع التالي",
+  },
+  clients: {
+    description: "الأشخاص الذين يحجزون مواعيد لدى مؤسستك.",
+    nouveau: "عميل جديد",
+    rechercher: "البحث عن عميل",
+    rechercherExemple: "الاسم أو الهاتف أو البريد الإلكتروني",
+    colonnes: { nom: "الاسم", telephone: "الهاتف", email: "البريد الإلكتروني", rendezVous: "المواعيد", dernier: "آخر موعد" },
+    nonRenseigne: "غير مُدخل",
+  },
+};

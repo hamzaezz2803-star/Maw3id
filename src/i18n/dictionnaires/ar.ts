@@ -1,4 +1,6 @@
 import { accesAr } from "./ar-acces";
+import { activiteAr } from "./ar-activite";
+import { gestionAr } from "./ar-gestion";
 import { systemeDesignAr } from "./ar-systeme-design";
 import type { Dictionnaire } from "./fr";
 
@@ -137,4 +139,6 @@ export const ar: Dictionnaire = {
   },
   systemeDesign: systemeDesignAr,
   ...accesAr,
+  ...activiteAr,
+  ...gestionAr,
 };
