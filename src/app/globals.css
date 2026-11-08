@@ -1,26 +1,156 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Maw3id design tokens.
+ * Every color, radius, shadow and text style is defined here once and
+ * consumed through Tailwind utilities (bg-primary, text-fg-secondary,
+ * rounded-control, text-page-title...). Components never hardcode colors.
+ * Light theme only for now.
+ */
+@theme {
+  /* Fonts (loaded with next/font in app/layout.tsx) */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Brand */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-subtle: #eff6ff;
+  --color-primary-foreground: #ffffff;
+
+  /* Secondary: neutral filled surface for secondary actions */
+  --color-secondary: #f1f5f9;
+  --color-secondary-hover: #e2e8f0;
+  --color-secondary-foreground: #0f172a;
+
+  /* Neutrals */
+  --color-background: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-border: #e4e7ec;
+  --color-border-strong: #cbd2dc;
+
+  /* Text */
+  --color-fg: #0f172a;
+  --color-fg-secondary: #475569;
+  --color-fg-muted: #5b6b80;
+
+  /* Status (always paired with a label or icon, never color alone) */
+  --color-success: #15803d;
+  --color-success-subtle: #f0fdf4;
+  --color-warning: #b45309;
+  --color-warning-subtle: #fffbeb;
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-danger-subtle: #fef2f2;
+  --color-info: #0369a1;
+  --color-info-subtle: #f0f9ff;
+
+  /* Focus ring */
+  --color-ring: #3b82f6;
+
+  /* Typography scale: size, line height and weight together */
+  --text-page-title: 1.5rem;
+  --text-page-title--line-height: 2rem;
+  --text-page-title--font-weight: 600;
+  --text-page-title--letter-spacing: -0.015em;
+
+  --text-section-title: 1.125rem;
+  --text-section-title--line-height: 1.75rem;
+  --text-section-title--font-weight: 600;
+
+  --text-card-title: 1rem;
+  --text-card-title--line-height: 1.5rem;
+  --text-card-title--font-weight: 600;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+
+  --text-label: 0.875rem;
+  --text-label--line-height: 1.25rem;
+  --text-label--font-weight: 500;
+
+  --text-helper: 0.875rem;
+  --text-helper--line-height: 1.25rem;
+
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-caption--font-weight: 500;
+
+  /* Radii: controls stay between 6 and 10 px (no pill buttons) */
+  --radius-control: 0.5rem;
+  --radius-card: 0.75rem;
+
+  /* Shadows: soft and minimal */
+  --shadow-card: 0 1px 2px 0 rgb(16 24 40 / 0.04);
+  --shadow-popover:
+    0 12px 24px -6px rgb(16 24 40 / 0.1), 0 2px 6px -2px rgb(16 24 40 / 0.06);
+
+  /* Layout dimensions (spacing scale stays Tailwind's 4 px grid) */
+  --spacing-sidebar: 16rem;
+  --spacing-sidebar-collapsed: 4.5rem;
+  --spacing-navbar: 4rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: light;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /*
+   * Native popover panels (Dropdown) anchored to their trigger with CSS
+   * anchor positioning. The trigger and the panel share --popover-anchor.
+   */
+  .popover-panel {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    margin-block-start: 0.5rem;
+    position-anchor: var(--popover-anchor);
+    position-area: bottom span-left;
+    position-try-fallbacks: flip-inline, flip-block;
+  }
+
+  .popover-panel[data-align="start"] {
+    position-area: bottom span-right;
+  }
+
+  /* Fallback for browsers without anchor positioning */
+  @supports not (anchor-name: --a) {
+    .popover-panel {
+      inset: calc(var(--spacing-navbar) + 0.25rem) 1rem auto auto;
+    }
+
+    .popover-panel[data-align="start"] {
+      inset: calc(var(--spacing-navbar) + 0.25rem) auto auto 1rem;
+    }
+  }
+
+  dialog::backdrop {
+    background-color: rgb(15 23 42 / 0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
