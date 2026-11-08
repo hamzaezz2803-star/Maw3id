@@ -20,15 +20,15 @@ export async function MenuUtilisateur({ utilisateur, role }: ProprietesMenuUtili
     <MenuDeroulant
       libelleDeclencheur={formaterTexte(t.utilisateur.menuDuCompte, { nom: utilisateur.nom_complet })}
       classePanneau="w-72"
-      classeDeclencheur="flex h-11 items-center gap-2.5 rounded-control px-1 transition-colors hover:bg-secondary sm:h-10 lg:pe-2"
+      classeDeclencheur="flex h-11 items-center gap-2.5 rounded-control px-1 transition-colors hover:bg-secondary sm:h-10 xl:pe-2"
       declencheur={
         <>
           <Avatar nom={utilisateur.nom_complet} source={utilisateur.avatar_url} taille="petit" />
-          <span className="hidden min-w-0 flex-col text-start lg:flex">
+          <span className="hidden min-w-0 flex-col text-start xl:flex">
             <span className="truncate text-label text-fg">{utilisateur.nom_complet}</span>
             <span className="truncate text-helper text-fg-muted">{t.roles[role]}</span>
           </span>
-          <ChevronDown aria-hidden="true" className="hidden size-4 text-fg-muted lg:block" />
+          <ChevronDown aria-hidden="true" className="hidden size-4 text-fg-muted xl:block" />
         </>
       }
     >
